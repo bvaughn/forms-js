@@ -1,8 +1,8 @@
 {
   "name": "forms-js",
   "version": "0.0.1",
-  "homepage": "https://github.com/bvaughn/angular-form-for",
-  "description": "Set of Angular directives to simplify creating and validating HTML forms.",
+  "homepage": "https://github.com/forms-js/forms-js",
+  "description": "JavaScript library to simplify creating and validating HTML forms.",
   "authors": [
     "Brian Vaughn <brian.david.vaughn@gmail.com>",
     "David Jensen <david.lgj@gmail.com>",
@@ -39,7 +39,8 @@
     "es6-promise": "~2.0.1"
   },
   "scripts": {
-    "test": "gulp test"
+    "test": "gulp test",
+    "prepublish": "npm test"
   },
   "repository": {
     "type": "git",
