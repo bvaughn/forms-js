@@ -30,6 +30,7 @@ var fjs;
     })();
     fjs.Example = Example;
 })(fjs || (fjs = {}));
+;
 
 return fjs;
 }));
