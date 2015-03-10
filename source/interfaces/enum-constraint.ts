@@ -1,17 +1,21 @@
-/**
- * Allows custom error messages to be returned for failed enum validations.
- */
-interface EnumConstraint {
+module fjs {
 
   /**
-   * Error message used in the event of a failed validation.
-   *
-   * <p>If this string contains a "%s" it will be replaced with the attribute's current string value.
+   * Allows custom error messages to be returned for failed enum validations.
    */
-  failureMessage:string;
+  export interface EnumConstraint {
 
-  /**
-   * Regular expression constraint.
-   */
-  value:Array<any>;
+    /**
+     * Error message used in the event of a failed validation.
+     *
+     * <p>Use a <code>${value}</code> token to include the attribute's current string value,
+     * (e.g. if value is "foobar" then "${value} is not allowed" becomes "Foobar is not allowed").
+     */
+    failureMessage:string;
+
+    /**
+     * Regular expression constraint.
+     */
+    value:Array<any>;
+  }
 }

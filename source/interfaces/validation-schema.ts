@@ -1,7 +1,9 @@
-interface ValidationSchema {
+module fjs {
+  export interface ValidationSchema {
 
-  /**
-   * Map of field name to validation constraints; see {@link ValidatableAttribute}.
-   */
-  fields:{[fieldName:string]:ValidatableAttribute};
-};
+    /**
+     * Map of field name to validation constraints; see {@link ValidatableAttribute}.
+     */
+    fields:{[fieldName:string]:ValidatableAttribute};
+  }
+}

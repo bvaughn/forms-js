@@ -1,15 +1,18 @@
-/**
- * Allows custom error messages to be returned for failed boolean validations (e.g. required).
- */
-interface BooleanConstraint {
+module fjs {
 
   /**
-   * Error message used in the event of a failed validation.
+   * Allows custom error messages to be returned for failed boolean validations (e.g. required).
    */
-  failureMessage:string;
+  export interface BooleanConstraint {
 
-  /**
-   * Boolean constraint.
-   */
-  value:boolean;
+    /**
+     * Error message used in the event of a failed validation.
+     */
+    failureMessage:string;
+
+    /**
+     * Boolean constraint.
+     */
+    value:boolean;
+  }
 }

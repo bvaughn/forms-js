@@ -1,17 +1,21 @@
-/**
- * Allows custom error messages to be returned for failed RegExp validations (e.g. pattern).
- */
-interface RegExpConstraint {
+module fjs {
 
   /**
-   * Error message used in the event of a failed validation.
-   *
-   * <p>If this string contains a "%s" it will be replaced with the attribute's current string value.
+   * Allows custom error messages to be returned for failed RegExp validations (e.g. pattern).
    */
-  failureMessage:string;
+  export interface RegExpConstraint {
 
-  /**
-   * Regular expression constraint.
-   */
-  value:RegExp;
+    /**
+     * Error message used in the event of a failed validation.
+     *
+     * <p>Use a <code>${value}</code> token to include the attribute's current string value,
+     * (e.g. if value is "foobar" then "${value} is not allowed" becomes "Foobar is not allowed").
+     */
+    failureMessage:string;
+
+    /**
+     * Regular expression constraint.
+     */
+    value:RegExp;
+  }
 }
