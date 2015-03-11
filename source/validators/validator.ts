@@ -21,6 +21,8 @@ module fjs {
       promises.push(RequiredValidator.validate(value, formData, validatableAttribute));
       // TODO Additional validators here.
 
+      // TODO We should probably roll our own Promise.all type wrapper that returns an array of validation failures;
+      // Promise.all only returns the first failure message.
       return Promise.all(promises);
     }
   }

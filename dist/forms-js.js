@@ -36,18 +36,11 @@ var fjs;
         function RequiredValidator() {
         }
         RequiredValidator.validate = function (value, formData, validatableAttribute) {
-            var required = validatableAttribute.required;
-            if (!required || !!value) {
+            if (!validatableAttribute.required || value) {
                 return Promise.resolve();
             }
-            var failureMessage;
-            if (required instanceof Object) {
-                failureMessage = validatableAttribute.required.failureMessage;
-            }
-            else {
-                failureMessage = 'This is a required field'; // TODO Read from i18n service.
-            }
-            return Promise.reject(failureMessage);
+            // TODO Retrieve default validation failure message from i18n service.
+            return Promise.reject(validatableAttribute.requiredFailureMessage || 'This is a required field');
         };
         return RequiredValidator;
     })();
@@ -74,6 +67,8 @@ var fjs;
             var promises = [];
             promises.push(fjs.RequiredValidator.validate(value, formData, validatableAttribute));
             // TODO Additional validators here.
+            // TODO We should probably roll our own Promise.all type wrapper that returns an array of validation failures;
+            // Promise.all only returns the first failure message.
             return Promise.all(promises);
         };
         return Validator;
