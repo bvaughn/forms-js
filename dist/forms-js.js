@@ -32,6 +32,59 @@ var fjs;
 })(fjs || (fjs = {}));
 var fjs;
 (function (fjs) {
+    /**
+     * Supported type validations.
+     */
+    (function (ValidationType) {
+        ValidationType[ValidationType["BOOLEAN"] = "boolean"] = "BOOLEAN";
+        ValidationType[ValidationType["FLOAT"] = "float"] = "FLOAT";
+        ValidationType[ValidationType["INTEGER"] = "integer"] = "INTEGER";
+        ValidationType[ValidationType["STRING"] = "string"] = "STRING";
+    })(fjs.ValidationType || (fjs.ValidationType = {}));
+    var ValidationType = fjs.ValidationType;
+    ;
+})(fjs || (fjs = {}));
+;
+var fjs;
+(function (fjs) {
+    var MinMaxValidator = (function () {
+        function MinMaxValidator() {
+        }
+        MinMaxValidator.validate = function (value, formData, validatableAttribute) {
+            var failureMessage;
+            // TODO Retrieve default validation failure messages from i18n service.
+            if (validatableAttribute.min) {
+                if (typeof value === 'string' && value.length < validatableAttribute.min) {
+                    failureMessage = validatableAttribute.minFailureMessage || "Must be at least ${min}.";
+                }
+                else if (typeof value === 'number' && value < validatableAttribute.min) {
+                    failureMessage = validatableAttribute.minFailureMessage || "Must be at least ${min} characters long.";
+                }
+                if (failureMessage) {
+                    failureMessage = failureMessage.replace('${value}', value).replace('${min}', validatableAttribute.min);
+                    return Promise.reject(failureMessage);
+                }
+            }
+            if (validatableAttribute.max) {
+                if (typeof value === 'string' && value.length > validatableAttribute.max) {
+                    failureMessage = validatableAttribute.maxFailureMessage || "Must be no more than ${max}.";
+                }
+                else if (typeof value === 'number' && value > validatableAttribute.max) {
+                    failureMessage = validatableAttribute.maxFailureMessage || "Must be no more than ${max} characters long.";
+                }
+                if (failureMessage) {
+                    failureMessage = failureMessage.replace('${value}', value).replace('${max}', validatableAttribute.max);
+                    return Promise.reject(failureMessage);
+                }
+            }
+            return Promise.resolve();
+        };
+        return MinMaxValidator;
+    })();
+    fjs.MinMaxValidator = MinMaxValidator;
+})(fjs || (fjs = {}));
+var fjs;
+(function (fjs) {
     var RequiredValidator = (function () {
         function RequiredValidator() {
         }
@@ -45,6 +98,44 @@ var fjs;
         return RequiredValidator;
     })();
     fjs.RequiredValidator = RequiredValidator;
+})(fjs || (fjs = {}));
+var fjs;
+(function (fjs) {
+    var TypeValidator = (function () {
+        function TypeValidator() {
+        }
+        TypeValidator.validate = function (value, formData, validatableAttribute) {
+            if (validatableAttribute.type) {
+                var stringValue = value.toString();
+                var numericValue = Number(value);
+                // TODO Retrieve default validation failure message from i18n service.
+                var failureMessage = validatableAttribute.typeFailureMessage || 'This is a required field';
+                switch (validatableAttribute.type) {
+                    case fjs.ValidationType.BOOLEAN:
+                        if (stringValue != 'true' && stringValue != 'false') {
+                            return Promise.reject(failureMessage);
+                        }
+                        break;
+                    case fjs.ValidationType.FLOAT:
+                        if (stringValue && isNaN(numericValue)) {
+                            return Promise.reject(failureMessage);
+                        }
+                        break;
+                    case fjs.ValidationType.INTEGER:
+                        if (stringValue && (isNaN(numericValue) || numericValue % 1 !== 0)) {
+                            return Promise.reject(failureMessage);
+                        }
+                        break;
+                    case fjs.ValidationType.STRING:
+                    default:
+                        break;
+                }
+            }
+            return Promise.resolve();
+        };
+        return TypeValidator;
+    })();
+    fjs.TypeValidator = TypeValidator;
 })(fjs || (fjs = {}));
 var fjs;
 (function (fjs) {
@@ -119,7 +210,7 @@ var fjs;
             // See https://github.com/bvaughn/angular-form-for/blob/type-script/source/utils/nested-object-helper.ts#L30
             var value = formData[fieldName];
             var validatableAttribute = validationSchema[fieldName];
-            return new fjs.ValidationPromiseBuilder().add(fjs.RequiredValidator.validate(value, formData, validatableAttribute)).build();
+            return new fjs.ValidationPromiseBuilder().add(fjs.RequiredValidator.validate(value, formData, validatableAttribute)).add(fjs.TypeValidator.validate(value, formData, validatableAttribute)).add(fjs.MinMaxValidator.validate(value, formData, validatableAttribute)).build();
         };
         return ValidationService;
     })();

@@ -106,7 +106,7 @@ module fjs {
      *
      * <p>Type validations will fail with a default error message unless overridden with "typeFailureMessage".
      */
-    type?:string;
+    type?:ValidationType;
 
     /**
      * Optional custom failure message used in the event of a failed "type" validation.

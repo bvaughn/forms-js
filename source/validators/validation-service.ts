@@ -19,6 +19,8 @@ module fjs {
 
       return new ValidationPromiseBuilder()
         .add(RequiredValidator.validate(value, formData, validatableAttribute))
+        .add(TypeValidator.validate(value, formData, validatableAttribute))
+        .add(MinMaxValidator.validate(value, formData, validatableAttribute))
         // TODO Additional validators here.
         .build();
     }
