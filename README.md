@@ -4,7 +4,12 @@ This is a seed project to get us started with prototyping.
 
 ## Installation
 
-First install the toolchain with [NPM](https://www.npmjs.org/):
+First install the command line tools globally with [NPM](https://www.npmjs.org/):
+```shell
+npm install --global gulp uglify-js2
+```
+
+Next install the remainder of the toolchain:
 
 ```shell
 npm install
