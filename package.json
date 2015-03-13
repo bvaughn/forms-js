@@ -36,10 +36,14 @@
     "gulp-clean": "~0.3.1",
     "gulp-uglify": "~1.1.0",
     "gulp-shell": "~0.3.0",
-    "es6-promise": "~2.0.1"
+    "es6-promise": "~2.0.1",
+    "uglify-js": "~2.4.17"
   },
   "scripts": {
+    "all": "gulp all",
+    "build": "gulp build",
     "test": "gulp test",
+    "test:watch": "gulp test:watch",
     "prepublish": "npm test"
   },
   "repository": {

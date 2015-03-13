@@ -17,13 +17,13 @@ npm install
 Now you can build source like so:
 
 ```shell
-gulp build
+npm run build
 ```
 
 And run tests like so:
 
 ```shell
-gulp test:watch
+npm run test:watch
 ```
 
 Note that tests are run on *built* source so be sure to build first.
