@@ -1,5 +1,7 @@
 # Forms JS
 
+[![Build Status](https://travis-ci.org/forms-js/forms-js.svg)](https://travis-ci.org/forms-js/forms-js)
+
 This is a seed project to get us started with prototyping.
 
 ## Installation
