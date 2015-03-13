@@ -9,9 +9,9 @@ module fjs {
 
       if (validatableAttribute.min) {
         if (typeof value === 'string' && value.length < validatableAttribute.min) {
-          failureMessage = validatableAttribute.minFailureMessage || "Must be at least ${min}.";
-        } else if (typeof value === 'number' && value < validatableAttribute.min) {
           failureMessage = validatableAttribute.minFailureMessage || "Must be at least ${min} characters long.";
+        } else if (typeof value === 'number' && value < validatableAttribute.min) {
+          failureMessage = validatableAttribute.minFailureMessage || "Must be at least ${min}.";
         }
 
         if (failureMessage) {
@@ -25,9 +25,9 @@ module fjs {
 
       if (validatableAttribute.max) {
         if (typeof value === 'string' && value.length > validatableAttribute.max) {
-          failureMessage = validatableAttribute.maxFailureMessage || "Must be no more than ${max}.";
-        } else if (typeof value === 'number' && value > validatableAttribute.max) {
           failureMessage = validatableAttribute.maxFailureMessage || "Must be no more than ${max} characters long.";
+        } else if (typeof value === 'number' && value > validatableAttribute.max) {
+          failureMessage = validatableAttribute.maxFailureMessage || "Must be no more than ${max}.";
         }
 
         if (failureMessage) {

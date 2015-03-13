@@ -55,10 +55,10 @@ var fjs;
             // TODO Retrieve default validation failure messages from i18n service.
             if (validatableAttribute.min) {
                 if (typeof value === 'string' && value.length < validatableAttribute.min) {
-                    failureMessage = validatableAttribute.minFailureMessage || "Must be at least ${min}.";
+                    failureMessage = validatableAttribute.minFailureMessage || "Must be at least ${min} characters long.";
                 }
                 else if (typeof value === 'number' && value < validatableAttribute.min) {
-                    failureMessage = validatableAttribute.minFailureMessage || "Must be at least ${min} characters long.";
+                    failureMessage = validatableAttribute.minFailureMessage || "Must be at least ${min}.";
                 }
                 if (failureMessage) {
                     failureMessage = failureMessage.replace('${value}', value).replace('${min}', validatableAttribute.min);
@@ -67,10 +67,10 @@ var fjs;
             }
             if (validatableAttribute.max) {
                 if (typeof value === 'string' && value.length > validatableAttribute.max) {
-                    failureMessage = validatableAttribute.maxFailureMessage || "Must be no more than ${max}.";
+                    failureMessage = validatableAttribute.maxFailureMessage || "Must be no more than ${max} characters long.";
                 }
                 else if (typeof value === 'number' && value > validatableAttribute.max) {
-                    failureMessage = validatableAttribute.maxFailureMessage || "Must be no more than ${max} characters long.";
+                    failureMessage = validatableAttribute.maxFailureMessage || "Must be no more than ${max}.";
                 }
                 if (failureMessage) {
                     failureMessage = failureMessage.replace('${value}', value).replace('${max}', validatableAttribute.max);
