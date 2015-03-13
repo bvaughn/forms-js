@@ -1,3 +1,5 @@
+/// <reference path="../../definitions/es6-promise.d.ts" />
+
 module fjs {
 
   export class RequiredValidator {
