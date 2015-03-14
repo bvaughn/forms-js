@@ -101,6 +101,7 @@ var buildHelper = function(sources, directory, outputFile) {
     .src(sources)
     .pipe(typeScriptCompiler({
       module: "CommonJS",
+      declaration: true, // Generate *.d.ts declarations file as well
       emitError: false,
       out: outputFile,
       target: 'ES5'
