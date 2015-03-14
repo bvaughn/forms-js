@@ -12,7 +12,8 @@ describe('ValidationService:', function() {
     validationSchema = {
       field: validatableAttribute
     };
-    validationService = formsjs.ValidationService;
+
+    validationService = new formsjs.ValidationService();
   });
 
   afterEach(function () {

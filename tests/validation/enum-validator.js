@@ -7,7 +7,7 @@ describe('RequiredValidator:', function() {
   beforeEach(function() {
     JasminePromisMatchers.install(true);
 
-    validator = formsjs.EnumValidator;
+    validator = new formsjs.EnumValidator();
   });
 
   afterEach(function() {
@@ -20,7 +20,10 @@ describe('RequiredValidator:', function() {
       enumFailureMessage: '${value} is wrong!'
     };
 
-    expect(validator.validate('baz', {}, validatableAttribute)).toBeRejectedWith('baz is wrong!');
+    var promises = validator.validate('baz', {}, validatableAttribute);
+
+    expect(promises.length).toBe(1);
+    expect(promises[0]).toBeRejectedWith('baz is wrong!');
   });
 
   describe('string enums:', function() {
@@ -31,11 +34,16 @@ describe('RequiredValidator:', function() {
     });
 
     it('should accept values that are within the set of enums', function() {
-      expect(validator.validate('foo', {}, validatableAttribute)).toBeResolved();
+      var promises = validator.validate('foo', {}, validatableAttribute);
+
+      expect(promises.length).toBe(0);
     });
 
     it('should reject values that are not within the set of enums', function() {
-      expect(validator.validate('baz', {}, validatableAttribute)).toBeRejected();
+      var promises = validator.validate('baz', {}, validatableAttribute);
+
+      expect(promises.length).toBe(1);
+      expect(promises[0]).toBeRejected();
     });
   });
 
@@ -47,11 +55,16 @@ describe('RequiredValidator:', function() {
     });
 
     it('should accept values that are within the set of enums', function() {
-      expect(validator.validate(1, {}, validatableAttribute)).toBeResolved();
+      var promises = validator.validate(1, {}, validatableAttribute);
+
+      expect(promises.length).toBe(0);
     });
 
     it('should reject values that are not within the set of enums', function() {
-      expect(validator.validate(3, {}, validatableAttribute)).toBeRejected();
+      var promises = validator.validate(3, {}, validatableAttribute);
+
+      expect(promises.length).toBe(1);
+      expect(promises[0]).toBeRejected();
     });
   });
 
@@ -71,11 +84,16 @@ describe('RequiredValidator:', function() {
     });
 
     it('should accept values that are within the set of enums', function() {
-      expect(validator.validate(Foo, {}, validatableAttribute)).toBeResolved();
+      var promises = validator.validate(Foo, {}, validatableAttribute);
+
+      expect(promises.length).toBe(0);
     });
 
     it('should reject values that are not within the set of enums', function() {
-      expect(validator.validate(Baz, {}, validatableAttribute)).toBeRejected();
+      var promises = validator.validate(Baz, {}, validatableAttribute);
+
+      expect(promises.length).toBe(1);
+      expect(promises[0]).toBeRejected();
     });
   });
 });
