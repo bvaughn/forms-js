@@ -6,7 +6,7 @@ module formsjs {
 
     public static validate(value:any, formData:any, validatableAttribute:ValidatableAttribute):Promise<any> {
       if (validatableAttribute.type) {
-        var stringValue:string = value.toString();
+        var stringValue:string = value !== undefined && value !== null ? value.toString() : undefined;
         var numericValue:number = Number(value);
 
         // TODO Retrieve default validation failure message from i18n service.
@@ -14,7 +14,7 @@ module formsjs {
 
         switch (validatableAttribute.type) {
           case ValidationType.BOOLEAN:
-            if (stringValue != 'true' && stringValue != 'false') {
+            if (stringValue && stringValue != 'true' && stringValue != 'false') {
               return Promise.reject(failureMessage);
             }
             break;

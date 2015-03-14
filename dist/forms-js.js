@@ -152,13 +152,13 @@ var formsjs;
         }
         TypeValidator.validate = function (value, formData, validatableAttribute) {
             if (validatableAttribute.type) {
-                var stringValue = value.toString();
+                var stringValue = value !== undefined && value !== null ? value.toString() : undefined;
                 var numericValue = Number(value);
                 // TODO Retrieve default validation failure message from i18n service.
                 var failureMessage = validatableAttribute.typeFailureMessage || 'This is a required field';
                 switch (validatableAttribute.type) {
                     case formsjs.ValidationType.BOOLEAN:
-                        if (stringValue != 'true' && stringValue != 'false') {
+                        if (stringValue && stringValue != 'true' && stringValue != 'false') {
                             return Promise.reject(failureMessage);
                         }
                         break;
