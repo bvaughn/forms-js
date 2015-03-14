@@ -55,9 +55,7 @@ var formsjs;
         return Form;
     })();
     formsjs.Form = Form;
-    ;
 })(formsjs || (formsjs = {}));
-;
 var formsjs;
 (function (formsjs) {
     /**
@@ -78,7 +76,7 @@ var formsjs;
         function Strings() {
             this.booleanTypeValidationFailed_ = Strings.booleanTypeValidationFailed;
             this.customValidationFailed_ = Strings.customValidationFailed;
-            this.enumValidationFailed_ = Strings.enumValidationFailed;
+            this.enumerationValidationFailed_ = Strings.enumerationValidationFailed;
             this.floatTypeValidationFailed_ = Strings.floatTypeValidationFailed;
             this.integerTypeValidationFailed_ = Strings.integerTypeValidationFailed;
             this.maximumNumberValidationFailed_ = Strings.maximumNumberValidationFailed;
@@ -109,12 +107,12 @@ var formsjs;
             enumerable: true,
             configurable: true
         });
-        Object.defineProperty(Strings.prototype, "enumValidationFailed", {
+        Object.defineProperty(Strings.prototype, "enumerationValidationFailed", {
             get: function () {
-                return this.enumValidationFailed_;
+                return this.enumerationValidationFailed_;
             },
             set: function (value) {
-                this.enumValidationFailed_ = value;
+                this.enumerationValidationFailed_ = value;
             },
             enumerable: true,
             configurable: true
@@ -211,7 +209,7 @@ var formsjs;
         });
         Strings.booleanTypeValidationFailed = '${value} must be a boolean.';
         Strings.customValidationFailed = 'Value ${value} failed custom validation.';
-        Strings.enumValidationFailed = 'The value for ${value} is not in the list of allowed values';
+        Strings.enumerationValidationFailed = 'The value for ${value} is not in the list of allowed values';
         Strings.floatTypeValidationFailed = '${value} must be a float.';
         Strings.integerTypeValidationFailed = '${value} must be an integer.';
         Strings.maximumNumberValidationFailed = 'Must be no more than ${max}.';
@@ -224,9 +222,7 @@ var formsjs;
         return Strings;
     })();
     formsjs.Strings = Strings;
-    ;
 })(formsjs || (formsjs = {}));
-;
 var formsjs;
 (function (formsjs) {
     /**
@@ -239,9 +235,9 @@ var formsjs;
         ValidationType[ValidationType["STRING"] = "string"] = "STRING";
     })(formsjs.ValidationType || (formsjs.ValidationType = {}));
     var ValidationType = formsjs.ValidationType;
-    ;
 })(formsjs || (formsjs = {}));
-;
+/// <reference path="../../definitions/es6-promise.d.ts" />
+/// <reference path="../../definitions/es6-promise.d.ts" />
 /// <reference path="../../definitions/es6-promise.d.ts" />
 var formsjs;
 (function (formsjs) {
@@ -336,8 +332,6 @@ var formsjs;
     })();
     formsjs.ValidationService = ValidationService;
 })(formsjs || (formsjs = {}));
-/// <reference path="../../definitions/es6-promise.d.ts" />
-/// <reference path="../../definitions/es6-promise.d.ts" />
 /// <reference path="../../../definitions/es6-promise.d.ts" />
 var formsjs;
 (function (formsjs) {
@@ -422,8 +416,8 @@ var formsjs;
          */
         EnumValidator.prototype.validate = function (value, formData, validatableAttribute) {
             var promises = [];
-            if (validatableAttribute.enum && validatableAttribute.enum.indexOf(value) < 0) {
-                var failureMessage = validatableAttribute.enumFailureMessage || this.strings.enumValidationFailed;
+            if (validatableAttribute.enumeration && validatableAttribute.enumeration.indexOf(value) < 0) {
+                var failureMessage = validatableAttribute.enumerationFailureMessage || this.strings.enumerationValidationFailed;
                 failureMessage = failureMessage.replace('${value}', value);
                 promises.push(Promise.reject(failureMessage));
             }

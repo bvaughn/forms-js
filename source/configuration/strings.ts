@@ -18,7 +18,7 @@ module formsjs {
 
     public static booleanTypeValidationFailed:string = '${value} must be a boolean.';
     public static customValidationFailed:string = 'Value ${value} failed custom validation.';
-    public static enumValidationFailed:string = 'The value for ${value} is not in the list of allowed values';
+    public static enumerationValidationFailed:string = 'The value for ${value} is not in the list of allowed values';
     public static floatTypeValidationFailed:string = '${value} must be a float.';
     public static integerTypeValidationFailed:string = '${value} must be an integer.';
     public static maximumNumberValidationFailed:string = 'Must be no more than ${max}.';
@@ -31,7 +31,7 @@ module formsjs {
 
     private booleanTypeValidationFailed_:string;
     private customValidationFailed_:string;
-    private enumValidationFailed_:string;
+    private enumerationValidationFailed_:string;
     private floatTypeValidationFailed_:string;
     private integerTypeValidationFailed_:string;
     private maximumNumberValidationFailed_:string;
@@ -45,7 +45,7 @@ module formsjs {
     constructor() {
       this.booleanTypeValidationFailed_ = Strings.booleanTypeValidationFailed;
       this.customValidationFailed_ = Strings.customValidationFailed;
-      this.enumValidationFailed_ = Strings.enumValidationFailed;
+      this.enumerationValidationFailed_ = Strings.enumerationValidationFailed;
       this.floatTypeValidationFailed_ = Strings.floatTypeValidationFailed;
       this.integerTypeValidationFailed_ = Strings.integerTypeValidationFailed;
       this.maximumNumberValidationFailed_ = Strings.maximumNumberValidationFailed;
@@ -63,8 +63,8 @@ module formsjs {
     get customValidationFailed():string { return this.customValidationFailed_; }
     set customValidationFailed(value:string) { this.customValidationFailed_ = value; }
 
-    get enumValidationFailed():string { return this.enumValidationFailed_; }
-    set enumValidationFailed(value:string) { this.enumValidationFailed_ = value; }
+    get enumerationValidationFailed():string { return this.enumerationValidationFailed_; }
+    set enumerationValidationFailed(value:string) { this.enumerationValidationFailed_ = value; }
 
     get floatTypeValidationFailed():string { return this.floatTypeValidationFailed_; }
     set floatTypeValidationFailed(value:string) { this.floatTypeValidationFailed_ = value; }

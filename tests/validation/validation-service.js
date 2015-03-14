@@ -63,8 +63,8 @@ describe('ValidationService:', function() {
         field: 'baz'
       };
 
-      validationSchema.field.enum = ['foo', 'bar'];
-      validationSchema.field.enumFailureMessage = 'Foo is not in the set.';
+      validationSchema.field.enumeration = ['foo', 'bar'];
+      validationSchema.field.enumerationFailureMessage = 'Foo is not in the set.';
       validationSchema.field.type = formsjs.ValidationType.INTEGER;
       validationSchema.field.typeFailureMessage = 'Foo is not an integer.';
 

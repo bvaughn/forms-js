@@ -16,8 +16,8 @@ describe('RequiredValidator:', function() {
 
   it('should reject values that are not within the set of enums with custom failure message', function() {
     validatableAttribute = {
-      enum: [],
-      enumFailureMessage: '${value} is wrong!'
+      enumeration: [],
+      enumerationFailureMessage: '${value} is wrong!'
     };
 
     var promises = validator.validate('baz', {}, validatableAttribute);
@@ -29,7 +29,7 @@ describe('RequiredValidator:', function() {
   describe('string enums:', function() {
     beforeEach(function() {
       validatableAttribute = {
-        enum: ['foo', 'bar']
+        enumeration: ['foo', 'bar']
       };
     });
 
@@ -50,7 +50,7 @@ describe('RequiredValidator:', function() {
   describe('numeric enums:', function() {
     beforeEach(function() {
       validatableAttribute = {
-        enum: [1, 2]
+        enumeration: [1, 2]
       };
     });
 
@@ -79,7 +79,7 @@ describe('RequiredValidator:', function() {
       Baz = {};
 
       validatableAttribute = {
-        enum: [Foo, Bar]
+        enumeration: [Foo, Bar]
       };
     });
 

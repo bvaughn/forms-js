@@ -17,7 +17,7 @@ module formsjs {
      *
      * <p>Enum validations will fail with a default error message unless overridden with "enumFailureMessage".
      */
-    enum?:Array<any>;
+    enumeration?:Array<any>;
 
     /**
      * Optional custom failure message used in the event of a failed "enum" validation.
@@ -25,7 +25,7 @@ module formsjs {
      * <p>Use a <code>${value}</code> token to include the attribute's current string value,
      * (e.g. if value is "foobar" then "${value} is not allowed" becomes "foobar is not allowed").
      */
-    enumFailureMessage?:string;
+    enumerationFailureMessage?:string;
 
     /**
      * Maximum length/size of attribute.

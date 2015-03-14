@@ -11,8 +11,8 @@ module formsjs {
     public validate(value:any, formData:any, validatableAttribute:ValidatableAttribute):Array<Promise<string>> {
       var promises:Array<Promise<string>> = [];
 
-      if (validatableAttribute.enum && validatableAttribute.enum.indexOf(value) < 0) {
-        var failureMessage = validatableAttribute.enumFailureMessage || this.strings.enumValidationFailed;
+      if (validatableAttribute.enumeration && validatableAttribute.enumeration.indexOf(value) < 0) {
+        var failureMessage = validatableAttribute.enumerationFailureMessage || this.strings.enumerationValidationFailed;
         failureMessage = failureMessage.replace('${value}', value);
 
         promises.push(Promise.reject(failureMessage));
