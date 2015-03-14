@@ -1,4 +1,4 @@
-module fjs {
+module formsjs {
 
   /**
    * Supported type validations.

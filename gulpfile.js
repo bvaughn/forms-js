@@ -115,10 +115,10 @@ var umdHelper = function(sources, directory) {
     .src(sources)
     .pipe(umd({
       exports: function(file) {
-        return 'fjs';
+        return 'formsjs';
       },
       namespace: function(file) {
-        return 'fjs';
+        return 'formsjs';
       }
       //template: path.join(__dirname, 'templates/returnExports.js')
     }))

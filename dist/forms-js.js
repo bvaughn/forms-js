@@ -4,11 +4,11 @@
   } else if (typeof exports === 'object') {
     module.exports = factory();
   } else {
-    root.fjs = factory();
+    root.formsjs = factory();
   }
 }(this, function() {
-var fjs;
-(function (fjs) {
+var formsjs;
+(function (formsjs) {
     /**
      * Supported type validations.
      */
@@ -17,15 +17,61 @@ var fjs;
         ValidationType[ValidationType["FLOAT"] = "float"] = "FLOAT";
         ValidationType[ValidationType["INTEGER"] = "integer"] = "INTEGER";
         ValidationType[ValidationType["STRING"] = "string"] = "STRING";
-    })(fjs.ValidationType || (fjs.ValidationType = {}));
-    var ValidationType = fjs.ValidationType;
+    })(formsjs.ValidationType || (formsjs.ValidationType = {}));
+    var ValidationType = formsjs.ValidationType;
     ;
-})(fjs || (fjs = {}));
+})(formsjs || (formsjs = {}));
 ;
 /// <reference path="../../definitions/es6-promise.d.ts" />
 /// <reference path="../../definitions/es6-promise.d.ts" />
-var fjs;
-(function (fjs) {
+var formsjs;
+(function (formsjs) {
+    var CustomValidator = (function () {
+        function CustomValidator() {
+        }
+        CustomValidator.validate = function (value, formData, validatableAttribute) {
+            var promises = [];
+            if (validatableAttribute.validators) {
+                // TODO Retrieve default validation failure message from i18n service.
+                var defaultFailureMessage = 'Value ${value} failed custom validation.';
+                validatableAttribute.validators.forEach(function (validatorFunction) {
+                    var resolution = validatorFunction(value, formData);
+                    if (resolution instanceof Promise) {
+                        promises.push(resolution);
+                    }
+                    else if (!resolution) {
+                        promises.push(Promise.reject(defaultFailureMessage));
+                    }
+                });
+            }
+            return promises;
+        };
+        return CustomValidator;
+    })();
+    formsjs.CustomValidator = CustomValidator;
+})(formsjs || (formsjs = {}));
+/// <reference path="../../definitions/es6-promise.d.ts" />
+var formsjs;
+(function (formsjs) {
+    var EnumValidator = (function () {
+        function EnumValidator() {
+        }
+        EnumValidator.validate = function (value, formData, validatableAttribute) {
+            if (!validatableAttribute.enum || validatableAttribute.enum.indexOf(value) >= 0) {
+                return Promise.resolve();
+            }
+            // TODO Retrieve default validation failure message from i18n service.
+            var failureMessage = validatableAttribute.patternFailureMessage || 'The value for ${value} is not in the list of allowed values';
+            failureMessage = failureMessage.replace('${value}', value);
+            return Promise.reject(failureMessage);
+        };
+        return EnumValidator;
+    })();
+    formsjs.EnumValidator = EnumValidator;
+})(formsjs || (formsjs = {}));
+/// <reference path="../../definitions/es6-promise.d.ts" />
+var formsjs;
+(function (formsjs) {
     var MinMaxValidator = (function () {
         function MinMaxValidator() {
         }
@@ -60,11 +106,30 @@ var fjs;
         };
         return MinMaxValidator;
     })();
-    fjs.MinMaxValidator = MinMaxValidator;
-})(fjs || (fjs = {}));
+    formsjs.MinMaxValidator = MinMaxValidator;
+})(formsjs || (formsjs = {}));
 /// <reference path="../../definitions/es6-promise.d.ts" />
-var fjs;
-(function (fjs) {
+var formsjs;
+(function (formsjs) {
+    var PatternValidator = (function () {
+        function PatternValidator() {
+        }
+        PatternValidator.validate = function (value, formData, validatableAttribute) {
+            if (!validatableAttribute.pattern || validatableAttribute.pattern.exec(value)) {
+                return Promise.resolve();
+            }
+            // TODO Retrieve default validation failure message from i18n service.
+            var failureMessage = validatableAttribute.patternFailureMessage || 'The value for ${value} does not match the required pattern';
+            failureMessage = failureMessage.replace('${value}', value);
+            return Promise.reject(failureMessage);
+        };
+        return PatternValidator;
+    })();
+    formsjs.PatternValidator = PatternValidator;
+})(formsjs || (formsjs = {}));
+/// <reference path="../../definitions/es6-promise.d.ts" />
+var formsjs;
+(function (formsjs) {
     var RequiredValidator = (function () {
         function RequiredValidator() {
         }
@@ -77,11 +142,11 @@ var fjs;
         };
         return RequiredValidator;
     })();
-    fjs.RequiredValidator = RequiredValidator;
-})(fjs || (fjs = {}));
+    formsjs.RequiredValidator = RequiredValidator;
+})(formsjs || (formsjs = {}));
 /// <reference path="../../definitions/es6-promise.d.ts" />
-var fjs;
-(function (fjs) {
+var formsjs;
+(function (formsjs) {
     var TypeValidator = (function () {
         function TypeValidator() {
         }
@@ -92,22 +157,22 @@ var fjs;
                 // TODO Retrieve default validation failure message from i18n service.
                 var failureMessage = validatableAttribute.typeFailureMessage || 'This is a required field';
                 switch (validatableAttribute.type) {
-                    case fjs.ValidationType.BOOLEAN:
+                    case formsjs.ValidationType.BOOLEAN:
                         if (stringValue != 'true' && stringValue != 'false') {
                             return Promise.reject(failureMessage);
                         }
                         break;
-                    case fjs.ValidationType.FLOAT:
+                    case formsjs.ValidationType.FLOAT:
                         if (stringValue && isNaN(numericValue)) {
                             return Promise.reject(failureMessage);
                         }
                         break;
-                    case fjs.ValidationType.INTEGER:
+                    case formsjs.ValidationType.INTEGER:
                         if (stringValue && (isNaN(numericValue) || numericValue % 1 !== 0)) {
                             return Promise.reject(failureMessage);
                         }
                         break;
-                    case fjs.ValidationType.STRING:
+                    case formsjs.ValidationType.STRING:
                     default:
                         break;
                 }
@@ -116,11 +181,11 @@ var fjs;
         };
         return TypeValidator;
     })();
-    fjs.TypeValidator = TypeValidator;
-})(fjs || (fjs = {}));
+    formsjs.TypeValidator = TypeValidator;
+})(formsjs || (formsjs = {}));
 /// <reference path="../../definitions/es6-promise.d.ts" />
-var fjs;
-(function (fjs) {
+var formsjs;
+(function (formsjs) {
     var ValidationPromiseBuilder = (function () {
         function ValidationPromiseBuilder(promises) {
             this.promises_ = promises || [];
@@ -143,6 +208,11 @@ var fjs;
                 _this.markCompleted_(promise);
                 _this.checkForCompletion_();
             });
+            return this;
+        };
+        ValidationPromiseBuilder.prototype.addAll = function (promises) {
+            var _this = this;
+            promises.forEach(function (promise) { return _this.add(promise); });
             return this;
         };
         /**
@@ -172,11 +242,11 @@ var fjs;
         };
         return ValidationPromiseBuilder;
     })();
-    fjs.ValidationPromiseBuilder = ValidationPromiseBuilder;
-})(fjs || (fjs = {}));
+    formsjs.ValidationPromiseBuilder = ValidationPromiseBuilder;
+})(formsjs || (formsjs = {}));
 /// <reference path="../../definitions/es6-promise.d.ts" />
-var fjs;
-(function (fjs) {
+var formsjs;
+(function (formsjs) {
     var ValidationService = (function () {
         function ValidationService() {
         }
@@ -193,12 +263,12 @@ var fjs;
             // See https://github.com/bvaughn/angular-form-for/blob/type-script/source/utils/nested-object-helper.ts#L30
             var value = formData[fieldName];
             var validatableAttribute = validationSchema[fieldName];
-            return new fjs.ValidationPromiseBuilder().add(fjs.RequiredValidator.validate(value, formData, validatableAttribute)).add(fjs.TypeValidator.validate(value, formData, validatableAttribute)).add(fjs.MinMaxValidator.validate(value, formData, validatableAttribute)).build();
+            return new formsjs.ValidationPromiseBuilder().add(formsjs.RequiredValidator.validate(value, formData, validatableAttribute)).add(formsjs.TypeValidator.validate(value, formData, validatableAttribute)).add(formsjs.MinMaxValidator.validate(value, formData, validatableAttribute)).add(formsjs.EnumValidator.validate(value, formData, validatableAttribute)).add(formsjs.PatternValidator.validate(value, formData, validatableAttribute)).addAll(formsjs.CustomValidator.validate(value, formData, validatableAttribute)).build();
         };
         return ValidationService;
     })();
-    fjs.ValidationService = ValidationService;
-})(fjs || (fjs = {}));
+    formsjs.ValidationService = ValidationService;
+})(formsjs || (formsjs = {}));
 
-return fjs;
+return formsjs;
 }));

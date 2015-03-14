@@ -1,6 +1,6 @@
 /// <reference path="../../definitions/es6-promise.d.ts" />
 
-module fjs {
+module formsjs {
 
   export class ValidationService {
 
@@ -23,7 +23,9 @@ module fjs {
         .add(RequiredValidator.validate(value, formData, validatableAttribute))
         .add(TypeValidator.validate(value, formData, validatableAttribute))
         .add(MinMaxValidator.validate(value, formData, validatableAttribute))
-        // TODO Additional validators here.
+        .add(EnumValidator.validate(value, formData, validatableAttribute))
+        .add(PatternValidator.validate(value, formData, validatableAttribute))
+        .addAll(CustomValidator.validate(value, formData, validatableAttribute))
         .build();
     }
   }

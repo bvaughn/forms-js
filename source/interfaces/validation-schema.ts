@@ -1,4 +1,4 @@
-module fjs {
+module formsjs {
 
   /**
    * Map of field name to validation constraints; see {@link ValidatableAttribute}.

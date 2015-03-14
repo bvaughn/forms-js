@@ -1,4 +1,4 @@
-module fjs {
+module formsjs {
 
   /**
    * The set of supported validation constraints that can be specified for an attribute.

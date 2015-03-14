@@ -9,6 +9,7 @@ module.exports = function(config) {
     },
     files: [
       'node_modules/es6-promise/dist/es6-promise.js',
+      'node_modules/jasmine-es6-promise-matchers/jasmine-es6-promise-matchers.js ',
       'dist/forms-js.js',
       'tests/**/*.js'
     ],

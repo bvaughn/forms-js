@@ -1,6 +1,6 @@
 /// <reference path="../../definitions/es6-promise.d.ts" />
 
-module fjs {
+module formsjs {
 
   export class ValidationPromiseBuilder {
 
@@ -35,6 +35,12 @@ module fjs {
           this.checkForCompletion_();
         }
       );
+
+      return this;
+    }
+
+    public addAll(promises:Array<Promise<any>>):ValidationPromiseBuilder {
+      promises.forEach((promise) => this.add(promise));
 
       return this;
     }

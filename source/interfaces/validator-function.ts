@@ -1,6 +1,6 @@
 /// <reference path="../../definitions/es6-promise.d.ts" />
 
-module fjs {
+module formsjs {
 
   /**
    * Custom validation function signature.
