@@ -42,5 +42,5 @@ module formsjs {
     public set validationSchema(value:ValidationSchema) {
       this.validationSchema_ = value;
     }
-  };
-};
+  }
+}

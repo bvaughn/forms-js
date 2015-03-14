@@ -92,5 +92,5 @@ module formsjs {
 
     get stringTypeValidationFailed():string { return this.stringTypeValidationFailed_; }
     set stringTypeValidationFailed(value:string) { this.stringTypeValidationFailed_ = value; }
-  };
-};
+  }
+}
