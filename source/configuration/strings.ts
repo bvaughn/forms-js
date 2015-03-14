@@ -1,5 +1,19 @@
 module formsjs {
 
+  /**
+   * Provides a mechanism for overriding Forms JS strings (e.g. validation failure messages).
+   *
+   * <ul>
+   *   <li>The prototype of this class defines an initial set of strings (as static properties).
+   *       (These are the Forms JS default values.)
+   *   <li>Override the static properties to change defaults for all instances of Forms JS.
+   *   <li>Strings instances will copy their values from the prototype's static properties.
+   *       (This includes any global overrides you may have set.)
+   *   <li>Override properties on a Strings instance to customize messages for a specific form.
+   *   <li>Lastly, individual fields can provide overrides as always via the validation schame.
+   *       (See {@link ValidatableAttribute}.
+   * </ul>
+   */
   export class Strings {
 
     public static booleanTypeValidationFailed:string = '${value} must be a boolean.';
