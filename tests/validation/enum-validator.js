@@ -17,10 +17,10 @@ describe('RequiredValidator:', function() {
   it('should reject values that are not within the set of enums with custom failure message', function() {
     validatableAttribute = {
       enum: [],
-      enumFailureMessage: 'foobar'
+      enumFailureMessage: '${value} is wrong!'
     };
 
-    expect(validator.validate('baz', {}, validatableAttribute)).toBeRejected('foobar');
+    expect(validator.validate('baz', {}, validatableAttribute)).toBeRejectedWith('baz is wrong!');
   });
 
   describe('string enums:', function() {

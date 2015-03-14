@@ -27,8 +27,8 @@ describe('PatternValidator:', function() {
   });
 
   it('should reject falsy values with custom failure message', function() {
-    validatableAttribute.patternFailureMessage = 'foobar';
+    validatableAttribute.patternFailureMessage = '${value} is wrong!';
 
-    expect(validator.validate('bar', {}, validatableAttribute)).toBeRejectedWith('foobar');
+    expect(validator.validate('bar', {}, validatableAttribute)).toBeRejectedWith('bar is wrong!');
   });
 });

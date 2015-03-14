@@ -61,7 +61,7 @@ var formsjs;
                 return Promise.resolve();
             }
             // TODO Retrieve default validation failure message from i18n service.
-            var failureMessage = validatableAttribute.patternFailureMessage || 'The value for ${value} is not in the list of allowed values';
+            var failureMessage = validatableAttribute.enumFailureMessage || 'The value for ${value} is not in the list of allowed values';
             failureMessage = failureMessage.replace('${value}', value);
             return Promise.reject(failureMessage);
         };
@@ -155,7 +155,8 @@ var formsjs;
                 var stringValue = value !== undefined && value !== null ? value.toString() : undefined;
                 var numericValue = Number(value);
                 // TODO Retrieve default validation failure message from i18n service.
-                var failureMessage = validatableAttribute.typeFailureMessage || 'This is a required field';
+                var failureMessage = validatableAttribute.typeFailureMessage || '${value} is not a ${type}.';
+                failureMessage = failureMessage.replace('${value}', value).replace('${type}', validatableAttribute.type);
                 switch (validatableAttribute.type) {
                     case formsjs.ValidationType.BOOLEAN:
                         if (stringValue && stringValue != 'true' && stringValue != 'false') {

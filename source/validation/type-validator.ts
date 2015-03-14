@@ -10,7 +10,8 @@ module formsjs {
         var numericValue:number = Number(value);
 
         // TODO Retrieve default validation failure message from i18n service.
-        var failureMessage = validatableAttribute.typeFailureMessage || 'This is a required field';
+        var failureMessage = validatableAttribute.typeFailureMessage || '${value} is not a ${type}.';
+        failureMessage = failureMessage.replace('${value}', value).replace('${type}', <any> validatableAttribute.type);
 
         switch (validatableAttribute.type) {
           case ValidationType.BOOLEAN:

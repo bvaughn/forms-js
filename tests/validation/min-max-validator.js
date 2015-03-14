@@ -18,10 +18,10 @@ describe('RequiredValidator:', function() {
     it('should reject values that are less than the specified minimum with custom failure message', function() {
       validatableAttribute = {
         min: 1,
-        minFailureMessage: 'foobar'
+        minFailureMessage: '${value} is not ${min}!'
       };
 
-      expect(validator.validate(0, {}, validatableAttribute)).toBeRejected('foobar');
+      expect(validator.validate(0, {}, validatableAttribute)).toBeRejectedWith('0 is not 1!');
     });
 
     describe('string enums', function() {
@@ -65,10 +65,10 @@ describe('RequiredValidator:', function() {
     it('should reject values that are greater than the specified maximum with custom failure message', function() {
       validatableAttribute = {
         max: 1,
-        maxFailureMessage: 'foobar'
+        maxFailureMessage: '${value} is more than ${max}!'
       };
 
-      expect(validator.validate(2, {}, validatableAttribute)).toBeRejected('foobar');
+      expect(validator.validate(2, {}, validatableAttribute)).toBeRejectedWith('2 is more than 1!');
     });
 
     describe('string enums', function() {

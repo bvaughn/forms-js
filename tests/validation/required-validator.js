@@ -34,8 +34,8 @@ describe('RequiredValidator:', function() {
   });
 
   it('should reject falsy values with custom failure message', function() {
-    validatableAttribute.requiredFailureMessage = 'foobar';
+    validatableAttribute.requiredFailureMessage = 'wrong!';
 
-    expect(validator.validate(false, {}, validatableAttribute)).toBeRejectedWith('foobar');
+    expect(validator.validate(false, {}, validatableAttribute)).toBeRejectedWith('wrong!');
   });
 });

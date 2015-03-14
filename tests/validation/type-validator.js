@@ -21,10 +21,10 @@ describe('TypeValidator:', function() {
   it('should reject falsy values with custom failure message', function() {
     validatableAttribute = {
       type: Type.BOOLEAN,
-      typeFailureMessage: 'foobar'
+      typeFailureMessage: '${value} should be ${type}!'
     };
 
-    expect(validator.validate('foobar', {}, validatableAttribute)).toBeRejected('foobar');
+    expect(validator.validate('foobar', {}, validatableAttribute)).toBeRejectedWith('foobar should be boolean!');
   });
 
   describe('boolean:', function() {

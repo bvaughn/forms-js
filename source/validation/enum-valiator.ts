@@ -10,7 +10,7 @@ module formsjs {
       }
 
       // TODO Retrieve default validation failure message from i18n service.
-      var failureMessage = validatableAttribute.patternFailureMessage ||
+      var failureMessage = validatableAttribute.enumFailureMessage ||
         'The value for ${value} is not in the list of allowed values';
       failureMessage = failureMessage.replace('${value}', value);
 
