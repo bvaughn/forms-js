@@ -8,7 +8,7 @@ describe('TypeValidator:', function() {
   beforeEach(function() {
     JasminePromisMatchers.install(true);
 
-    validator = formsjs.TypeValidator;
+    validator = new formsjs.TypeValidator();
     Type = formsjs.ValidationType;
 
     validatableAttribute = {};
@@ -21,92 +21,168 @@ describe('TypeValidator:', function() {
   it('should reject falsy values with custom failure message', function() {
     validatableAttribute = {
       type: Type.BOOLEAN,
-      typeFailureMessage: '${value} should be ${type}!'
+      typeFailureMessage: '${value} should be truthy/falsy!'
     };
 
-    expect(validator.validate('foobar', {}, validatableAttribute)).toBeRejectedWith('foobar should be boolean!');
+    var promises = validator.validate('foobar', {}, validatableAttribute);
+
+    expect(promises.length).toBe(1);
+    expect(promises[0]).toBeRejectedWith('foobar should be truthy/falsy!');
   });
 
   describe('boolean:', function() {
+    beforeEach(function() {
+      validatableAttribute = {
+        type: Type.BOOLEAN
+      };
+    });
+
     it('should accept booleans and strings with boolean values', function() {
-      expect(validator.validate(true, {}, {type: Type.BOOLEAN})).toBeResolved();
-      expect(validator.validate(false, {}, {type: Type.BOOLEAN})).toBeResolved();
-      expect(validator.validate('true', {}, {type: Type.BOOLEAN})).toBeResolved();
-      expect(validator.validate('false', {}, {type: Type.BOOLEAN})).toBeResolved();
+      var values = [true, false, 'true', 'false'];
+
+      values.forEach(function(value) {
+        var promises = validator.validate(value, {}, validatableAttribute);
+
+        expect(promises.length).toBe(0);
+      });
     });
 
     it('should ignore empty values', function() {
-      expect(validator.validate(undefined, {}, {type: Type.BOOLEAN})).toBeResolved();
-      expect(validator.validate(null, {}, {type: Type.BOOLEAN})).toBeResolved();
-      expect(validator.validate('', {}, {type: Type.BOOLEAN})).toBeResolved();
+      var values = [undefined, null, ''];
+
+      values.forEach(function(value) {
+        var promises = validator.validate(value, {}, validatableAttribute);
+
+        expect(promises.length).toBe(0);
+      });
     });
 
     it('should reject non-booleans', function() {
-      expect(validator.validate(1, {}, {type: Type.BOOLEAN})).toBeRejected();
-      expect(validator.validate('T', {}, {type: Type.BOOLEAN})).toBeRejected();
+      var values = ['T', 1];
+
+      values.forEach(function(value) {
+        var promises = validator.validate(value, {}, validatableAttribute);
+
+        expect(promises.length).toBe(1);
+        expect(promises[0]).toBeRejected();
+      });
     });
   });
 
   describe('float:', function() {
+    beforeEach(function() {
+      validatableAttribute = {
+        type: Type.FLOAT
+      };
+    });
+
     it('should accept all numeric values', function() {
-      expect(validator.validate(0, {}, {type: Type.FLOAT})).toBeResolved();
-      expect(validator.validate(1, {}, {type: Type.FLOAT})).toBeResolved();
-      expect(validator.validate(1.1, {}, {type: Type.FLOAT})).toBeResolved();
-      expect(validator.validate(-1.1, {}, {type: Type.FLOAT})).toBeResolved();
-      expect(validator.validate('0', {}, {type: Type.FLOAT})).toBeResolved();
-      expect(validator.validate('1', {}, {type: Type.FLOAT})).toBeResolved();
-      expect(validator.validate('-1', {}, {type: Type.FLOAT})).toBeResolved();
-      expect(validator.validate('1.1', {}, {type: Type.FLOAT})).toBeResolved();
-      expect(validator.validate('-1.1', {}, {type: Type.FLOAT})).toBeResolved();
+      var values = [0, 1, -2, 1.1, -2.2, '0', '1', '-2', '1.1', '-2.2'];
+
+      values.forEach(function(value) {
+        var promises = validator.validate(value, {}, validatableAttribute);
+
+        expect(promises.length).toBe(0);
+      });
     });
 
     it('should ignore empty values', function() {
-      expect(validator.validate(undefined, {}, {type: Type.FLOAT})).toBeResolved();
-      expect(validator.validate(null, {}, {type: Type.FLOAT})).toBeResolved();
+      var values = [undefined, null, ''];
+
+      values.forEach(function(value) {
+        var promises = validator.validate(value, {}, validatableAttribute);
+
+        expect(promises.length).toBe(0);
+      });
     });
 
     it('should reject non-numeric values', function() {
-      expect(validator.validate('one', {}, {type: Type.FLOAT})).toBeRejected();
-      expect(validator.validate('abc', {}, {type: Type.FLOAT})).toBeRejected();
+      var values = ['one', 'abc'];
+
+      values.forEach(function(value) {
+        var promises = validator.validate(value, {}, validatableAttribute);
+
+        expect(promises.length).toBe(1);
+        expect(promises[0]).toBeRejected();
+      });
     });
   });
 
   describe('integer:', function() {
+    beforeEach(function() {
+      validatableAttribute = {
+        type: Type.INTEGER
+      };
+    });
+
     it('should accept all integer values', function() {
-      expect(validator.validate(0, {}, {type: Type.INTEGER})).toBeResolved();
-      expect(validator.validate(1, {}, {type: Type.INTEGER})).toBeResolved();
-      expect(validator.validate(1.0, {}, {type: Type.INTEGER})).toBeResolved();
-      expect(validator.validate(-1.0, {}, {type: Type.INTEGER})).toBeResolved();
-      expect(validator.validate('0', {}, {type: Type.INTEGER})).toBeResolved();
-      expect(validator.validate('1', {}, {type: Type.INTEGER})).toBeResolved();
-      expect(validator.validate('-1', {}, {type: Type.INTEGER})).toBeResolved();
-      expect(validator.validate('1.0', {}, {type: Type.INTEGER})).toBeResolved();
-      expect(validator.validate('-1.0', {}, {type: Type.INTEGER})).toBeResolved();
+      var values = [0, 1, 2.0, -3.0, '0', '1', '2.0', '-3.0'];
+
+      values.forEach(function(value) {
+        var promises = validator.validate(value, {}, validatableAttribute);
+
+        expect(promises.length).toBe(0);
+      });
     });
 
     it('should ignore empty values', function() {
-      expect(validator.validate(undefined, {}, {type: Type.INTEGER})).toBeResolved();
-      expect(validator.validate(null, {}, {type: Type.INTEGER})).toBeResolved();
+      var values = [undefined, null, ''];
+
+      values.forEach(function(value) {
+        var promises = validator.validate(value, {}, validatableAttribute);
+
+        expect(promises.length).toBe(0);
+      });
     });
 
     it('should reject non-integer values', function() {
-      expect(validator.validate('one', {}, {type: Type.INTEGER})).toBeRejected();
-      expect(validator.validate('abc', {}, {type: Type.INTEGER})).toBeRejected();
-      expect(validator.validate(1.1, {}, {type: Type.INTEGER})).toBeRejected();
-      expect(validator.validate('1.1', {}, {type: Type.INTEGER})).toBeRejected();
+      var values = ['one', 'abc', 1.1, -2.3, '1.1', '-3.3'];
+
+      values.forEach(function(value) {
+        var promises = validator.validate(value, {}, validatableAttribute);
+
+        expect(promises.length).toBe(1);
+        expect(promises[0]).toBeRejected();
+      });
     });
   });
 
   describe('string:', function() {
-    it('should accept pretty much anything', function() {
-      expect(validator.validate('string', {}, {type: Type.STRING})).toBeResolved();
-      expect(validator.validate(1, {}, {type: Type.STRING})).toBeResolved();
-      expect(validator.validate(-1.0, {}, {type: Type.STRING})).toBeResolved();
+    beforeEach(function() {
+      validatableAttribute = {
+        type: Type.STRING
+      };
+    });
+
+    it('should accept string values', function() {
+      var values = ['string', '1', '-2.0'];
+
+      values.forEach(function(value) {
+        var promises = validator.validate(value, {}, validatableAttribute);
+
+        expect(promises.length).toBe(0);
+      });
     });
 
     it('should ignore empty values', function() {
-      expect(validator.validate(undefined, {}, {type: Type.STRING})).toBeResolved();
-      expect(validator.validate(null, {}, {type: Type.STRING})).toBeResolved();
+      var values = [undefined, null];
+
+      values.forEach(function(value) {
+        var promises = validator.validate(value, {}, validatableAttribute);
+
+        expect(promises.length).toBe(0);
+      });
+    });
+
+    it('should reject non-string values', function() {
+      var values = [[1], {foo: 'bar'}, new Date()];
+
+      values.forEach(function(value) {
+        var promises = validator.validate(value, {}, validatableAttribute);
+
+        expect(promises.length).toBe(1);
+        expect(promises[0]).toBeRejected();
+      });
     });
   });
 });

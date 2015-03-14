@@ -7,7 +7,7 @@ describe('CustomValidator:', function() {
   beforeEach(function() {
     JasminePromisMatchers.install(true);
 
-    validator = formsjs.CustomValidator;
+    validator = new formsjs.CustomValidator();
 
     validatableAttribute = {
       validators: []
@@ -36,18 +36,49 @@ describe('CustomValidator:', function() {
     var promises = validator.validate('foo', {}, validatableAttribute);
 
     expect(promises[0]).toBeRejected();
+    expect(promises[0]).toBeRejectedWith(formsjs.Strings.customValidationFailed);
   });
 
-  it('should pass through Promises as-is', function() {
-    var promise = new Promise(function() {});
-
+  it('should return a default failure message for promises rejected without arguments', function() {
     validatableAttribute.validators.push(function() {
-      return promise;
+      return new Promise(
+        function(resolve, reject) {
+          reject();
+        });
     });
 
     var promises = validator.validate('foo', {}, validatableAttribute);
 
-    expect(promises[0]).toBe(promise);
+    expect(promises[0]).toBeRejected();
+    expect(promises[0]).toBeRejectedWith(formsjs.Strings.customValidationFailed);
+  });
+
+  it('should return an overridden failure message for promises rejected with overrides', function() {
+    validatableAttribute.validators.push(function() {
+      return new Promise(
+        function(resolve, reject) {
+          reject('${value} failure message override');
+        });
+    });
+
+    var promises = validator.validate('foo', {}, validatableAttribute);
+
+    expect(promises[0]).toBeRejected();
+    expect(promises[0]).toBeRejectedWith('foo failure message override');
+  });
+
+  it('should pass through Promises as-is', function() {
+    validatableAttribute.validators.push(function() {
+      return new Promise(
+        function(resolve, reject) {
+          resolve();
+        });
+    });
+
+    var promises = validator.validate('foo', {}, validatableAttribute);
+
+    expect(promises.length).toBe(1);
+    expect(promises[0]).toBeResolved();
   });
 
   it('should support multiple return values', function() {
@@ -67,6 +98,6 @@ describe('CustomValidator:', function() {
 
     expect(promises.length).toBe(2);
     expect(promises[0]).toBeRejected();
-    expect(promises[1]).toBe(promise);
+    expect(promises[1] instanceof Promise).toBeTruthy();
   });
 });

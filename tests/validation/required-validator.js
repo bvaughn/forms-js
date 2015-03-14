@@ -7,7 +7,7 @@ describe('RequiredValidator:', function() {
   beforeEach(function() {
     JasminePromisMatchers.install(true);
 
-    validator = formsjs.RequiredValidator;
+    validator = new formsjs.RequiredValidator();
 
     validatableAttribute = {
       required: true
@@ -19,23 +19,32 @@ describe('RequiredValidator:', function() {
   });
 
   it('should accept truthy values', function() {
-    expect(validator.validate(true, {}, validatableAttribute)).toBeResolved();
-    expect(validator.validate(1, {}, validatableAttribute)).toBeResolved();
-    expect(validator.validate('value', {}, validatableAttribute)).toBeResolved();
-    expect(validator.validate([1,2,3], {}, validatableAttribute)).toBeResolved();
+    var values = [true, 1, 'value', [1,2,3]];
+
+    values.forEach(function(value) {
+      var promises = validator.validate(value, {}, validatableAttribute);
+
+      expect(promises.length).toBe(0);
+    });
   });
 
   it('should reject falsy values', function() {
-    expect(validator.validate(undefined, {}, validatableAttribute)).toBeRejected();
-    expect(validator.validate(null, {}, validatableAttribute)).toBeRejected();
-    expect(validator.validate(0, {}, validatableAttribute)).toBeRejected();
-    expect(validator.validate(false, {}, validatableAttribute)).toBeRejected();
-    expect(validator.validate('', {}, validatableAttribute)).toBeRejected();
+    var values = [undefined, null, 0, false, ''];
+
+    values.forEach(function(value) {
+      var promises = validator.validate(value, {}, validatableAttribute);
+
+      expect(promises.length).toBe(1);
+      expect(promises[0]).toBeRejected();
+    });
   });
 
   it('should reject falsy values with custom failure message', function() {
     validatableAttribute.requiredFailureMessage = 'wrong!';
 
-    expect(validator.validate(false, {}, validatableAttribute)).toBeRejectedWith('wrong!');
+    var promises = validator.validate(false, {}, validatableAttribute);
+
+    expect(promises.length).toBe(1);
+    expect(promises[0]).toBeRejectedWith('wrong!');
   });
 });

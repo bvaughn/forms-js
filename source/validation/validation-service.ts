@@ -4,6 +4,19 @@ module formsjs {
 
   export class ValidationService {
 
+    protected strings_:Strings;
+
+    constructor(strings?:Strings) {
+      this.strings_ = strings || new Strings();
+    }
+
+    public get strings():Strings {
+      return this.strings_;
+    }
+    public set strings(value:Strings) {
+      this.strings_ = value;
+    }
+
     /**
      * Validates an individual attribute (specified by fieldName) according to the provided validation rules.
      *
@@ -12,7 +25,7 @@ module formsjs {
      * @param validationSchema See {@link ValidationSchema}
      * @returns Promise that resolves/rejects based on validation outcome.
      */
-    public static validateField(fieldName:string, formData:any, validationSchema:ValidationSchema):Promise<any> {
+    public validateField(fieldName:string, formData:any, validationSchema:ValidationSchema):Promise<any> {
       // TODO Sanitize/escape incoming fieldName to avoid disallowed characters (e.g. ".", "[0]")
       // See https://github.com/bvaughn/angular-form-for/blob/type-script/source/utils/nested-object-helper.ts#L30
 
@@ -20,12 +33,12 @@ module formsjs {
       var validatableAttribute:ValidatableAttribute = validationSchema[fieldName];
 
       return new ValidationPromiseBuilder()
-        .add(RequiredValidator.validate(value, formData, validatableAttribute))
-        .add(TypeValidator.validate(value, formData, validatableAttribute))
-        .add(MinMaxValidator.validate(value, formData, validatableAttribute))
-        .add(EnumValidator.validate(value, formData, validatableAttribute))
-        .add(PatternValidator.validate(value, formData, validatableAttribute))
-        .addAll(CustomValidator.validate(value, formData, validatableAttribute))
+        .add(new RequiredValidator(this.strings).validate(value, formData, validatableAttribute))
+        .add(new TypeValidator(this.strings).validate(value, formData, validatableAttribute))
+        .add(new MinMaxValidator(this.strings).validate(value, formData, validatableAttribute))
+        .add(new EnumValidator(this.strings).validate(value, formData, validatableAttribute))
+        .add(new PatternValidator(this.strings).validate(value, formData, validatableAttribute))
+        .add(new CustomValidator(this.strings).validate(value, formData, validatableAttribute))
         .build();
     }
   }

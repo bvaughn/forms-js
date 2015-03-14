@@ -7,7 +7,7 @@ describe('PatternValidator:', function() {
   beforeEach(function() {
     JasminePromisMatchers.install(true);
 
-    validator = formsjs.PatternValidator;
+    validator = new formsjs.PatternValidator();
 
     validatableAttribute = {
       pattern: /foo/
@@ -19,16 +19,24 @@ describe('PatternValidator:', function() {
   });
 
   it('should accept matching values', function() {
-    expect(validator.validate('foo', {}, validatableAttribute)).toBeResolved();
+    var promises = validator.validate('foo', {}, validatableAttribute);
+
+    expect(promises.length).toBe(0);
   });
 
   it('should reject non-matching values', function() {
-    expect(validator.validate('bar', {}, validatableAttribute)).toBeRejected();
+    var promises = validator.validate('bar', {}, validatableAttribute);
+
+    expect(promises.length).toBe(1);
+    expect(promises[0]).toBeRejected();
   });
 
   it('should reject falsy values with custom failure message', function() {
     validatableAttribute.patternFailureMessage = '${value} is wrong!';
 
-    expect(validator.validate('bar', {}, validatableAttribute)).toBeRejectedWith('bar is wrong!');
+    var promises = validator.validate('bar', {}, validatableAttribute);
+
+    expect(promises.length).toBe(1);
+    expect(promises[0]).toBeRejectedWith('bar is wrong!');
   });
 });

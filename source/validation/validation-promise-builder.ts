@@ -16,31 +16,27 @@ module formsjs {
     }
 
     /**
-     * Adds a validation Promise to the watched collection.
+     * Adds validation Promises to the watched collection.
      *
-     * @param promise Validation promise to observe
+     * @param promises Set of validation promise to observe
      * @returns A reference to the current ValidationPromiseBuilder
      */
-    public add(promise:Promise<any>):ValidationPromiseBuilder {
-      this.promises_.push(promise);
+    public add(promises:Array<Promise<any>>):ValidationPromiseBuilder {
+      promises.forEach((promise) => {
+        this.promises_.push(promise);
 
-      promise.then(
-        () => {
-          this.markCompleted_(promise);
-          this.checkForCompletion_();
-        },
-        (error:any) => {
-          this.failureMessages_.push(error);
-          this.markCompleted_(promise);
-          this.checkForCompletion_();
-        }
-      );
-
-      return this;
-    }
-
-    public addAll(promises:Array<Promise<any>>):ValidationPromiseBuilder {
-      promises.forEach((promise) => this.add(promise));
+        promise.then(
+          () => {
+            this.markCompleted_(promise);
+            this.checkForCompletion_();
+          },
+          (error:any) => {
+            this.failureMessages_.push(error);
+            this.markCompleted_(promise);
+            this.checkForCompletion_();
+          }
+        );
+      });
 
       return this;
     }
