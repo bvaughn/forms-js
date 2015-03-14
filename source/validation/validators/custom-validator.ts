@@ -19,12 +19,12 @@ module formsjs {
             if (resolution instanceof Promise) {
               promises.push(
                 new Promise(
-                  function(resolve, reject) {
+                  (resolve, reject) => {
                     resolution.then(
-                      function() {
+                      () => {
                         resolve();
                       },
-                      function(error) {
+                      (error) => {
                         var failureMessage = error || this.strings.customValidationFailed;
                         failureMessage = failureMessage.replace('${value}', value);
 

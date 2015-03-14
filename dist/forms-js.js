@@ -9,16 +9,45 @@
 }(this, function() {
 var formsjs;
 (function (formsjs) {
+    /**
+     * Forms JS form represents a collection of validatable data.
+     */
     var Form = (function () {
+        /**
+         * Constructor.
+         */
         function Form() {
             this.strings_ = new formsjs.Strings();
         }
+        /**
+         * Returns a ValidationService configured for the current Form.
+         */
+        Form.prototype.createValidationService = function () {
+            return new formsjs.ValidationService(this.strings);
+        };
         Object.defineProperty(Form.prototype, "strings", {
+            /**
+             * Set the strings for this specific form.
+             * See {@link Strings}.
+             */
             get: function () {
                 return this.strings_;
             },
             set: function (value) {
                 this.strings_ = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Form.prototype, "validationSchema", {
+            /**
+             * This form's validations schema.
+             */
+            get: function () {
+                return this.validationSchema_;
+            },
+            set: function (value) {
+                this.validationSchema_ = value;
             },
             enumerable: true,
             configurable: true
@@ -214,8 +243,6 @@ var formsjs;
 })(formsjs || (formsjs = {}));
 ;
 /// <reference path="../../definitions/es6-promise.d.ts" />
-/// <reference path="../../definitions/es6-promise.d.ts" />
-/// <reference path="../../definitions/es6-promise.d.ts" />
 var formsjs;
 (function (formsjs) {
     var ValidationPromiseBuilder = (function () {
@@ -309,6 +336,8 @@ var formsjs;
     })();
     formsjs.ValidationService = ValidationService;
 })(formsjs || (formsjs = {}));
+/// <reference path="../../definitions/es6-promise.d.ts" />
+/// <reference path="../../definitions/es6-promise.d.ts" />
 /// <reference path="../../../definitions/es6-promise.d.ts" />
 var formsjs;
 (function (formsjs) {
@@ -362,7 +391,7 @@ var formsjs;
                             resolution.then(function () {
                                 resolve();
                             }, function (error) {
-                                var failureMessage = error || this.strings.customValidationFailed;
+                                var failureMessage = error || _this.strings.customValidationFailed;
                                 failureMessage = failureMessage.replace('${value}', value);
                                 reject(failureMessage);
                             });

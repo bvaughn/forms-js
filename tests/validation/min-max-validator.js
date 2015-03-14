@@ -5,7 +5,7 @@ describe('RequiredValidator:', function() {
   var validator;
 
   beforeEach(function() {
-    JasminePromisMatchers.install(true);
+    JasminePromisMatchers.install();
 
     validator = new formsjs.MinMaxValidator();
   });

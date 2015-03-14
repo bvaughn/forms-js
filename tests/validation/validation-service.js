@@ -6,7 +6,7 @@ describe('ValidationService:', function() {
   var validationService;
 
   beforeEach(function () {
-    JasminePromisMatchers.install(true);
+    JasminePromisMatchers.install();
 
     validatableAttribute = {};
     validationSchema = {

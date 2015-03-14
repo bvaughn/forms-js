@@ -4,7 +4,7 @@ describe('ValidationPromiseBuilder:', function() {
   var validationPromiseBuilder;
 
   beforeEach(function () {
-    JasminePromisMatchers.install(true);
+    JasminePromisMatchers.install();
 
     validationPromiseBuilder = new formsjs.ValidationPromiseBuilder();
   });

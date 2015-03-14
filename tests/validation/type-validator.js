@@ -6,7 +6,7 @@ describe('TypeValidator:', function() {
   var Type;
 
   beforeEach(function() {
-    JasminePromisMatchers.install(true);
+    JasminePromisMatchers.install();
 
     validator = new formsjs.TypeValidator();
     Type = formsjs.ValidationType;

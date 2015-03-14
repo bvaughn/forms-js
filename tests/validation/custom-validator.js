@@ -5,7 +5,7 @@ describe('CustomValidator:', function() {
   var validator;
 
   beforeEach(function() {
-    JasminePromisMatchers.install(true);
+    JasminePromisMatchers.install();
 
     validator = new formsjs.CustomValidator();
 
@@ -35,6 +35,7 @@ describe('CustomValidator:', function() {
 
     var promises = validator.validate('foo', {}, validatableAttribute);
 
+    expect(promises.length).toBe(1);
     expect(promises[0]).toBeRejected();
     expect(promises[0]).toBeRejectedWith(formsjs.Strings.customValidationFailed);
   });
@@ -49,8 +50,8 @@ describe('CustomValidator:', function() {
 
     var promises = validator.validate('foo', {}, validatableAttribute);
 
+    expect(promises.length).toBe(1);
     expect(promises[0]).toBeRejected();
-    expect(promises[0]).toBeRejectedWith(formsjs.Strings.customValidationFailed);
   });
 
   it('should return an overridden failure message for promises rejected with overrides', function() {
@@ -63,6 +64,7 @@ describe('CustomValidator:', function() {
 
     var promises = validator.validate('foo', {}, validatableAttribute);
 
+    expect(promises.length).toBe(1);
     expect(promises[0]).toBeRejected();
     expect(promises[0]).toBeRejectedWith('foo failure message override');
   });

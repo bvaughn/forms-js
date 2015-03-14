@@ -38,7 +38,7 @@
     "gulp-shell": "~0.3.0",
     "es6-promise": "~2.0.1",
     "uglify-js": "~2.4.17",
-    "jasmine-es6-promise-matchers": "~1.0.1"
+    "jasmine-es6-promise-matchers": "~1.0.2"
   },
   "scripts": {
     "all": "gulp all",
