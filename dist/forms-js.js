@@ -12,10 +12,16 @@ var formsjs;
 (function (formsjs) {
     /**
      * Metadata for a single form attribute (e.g. username).
+     *
+     * <p>This is the facade that sits between individual inputs/fields and the Forms JS {@link Form}.
+     * It handles validation (using {@link ValidationService}) and caches the result for easy access by the view layer.
      */
     var AttributeMetadata = (function () {
         /**
          * Constructor.
+         *
+         * @param form Forms JS form
+         * @param fieldName Attribute key within form data object
          */
         function AttributeMetadata(form, fieldName) {
             this.fieldName_ = fieldName;
@@ -66,7 +72,7 @@ var formsjs;
             configurable: true
         });
         /**
-         * Reset the metadata to its initial, pristine state (with no validation data).
+         * Reset metadata to its initial, pristine state.
          */
         AttributeMetadata.prototype.reset = function () {
             this.errorMessages_ = [];
@@ -74,6 +80,10 @@ var formsjs;
         };
         /**
          * Validate (or re-validate) this field.
+         *
+         * <p>This method will also update the cached validation state once validation has completed.
+         *
+         * @return Promise to be resolved or rejected upon validation completion.
          */
         AttributeMetadata.prototype.validate = function () {
             var _this = this;

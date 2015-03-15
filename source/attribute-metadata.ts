@@ -4,6 +4,9 @@ module formsjs {
 
   /**
    * Metadata for a single form attribute (e.g. username).
+   *
+   * <p>This is the facade that sits between individual inputs/fields and the Forms JS {@link Form}.
+   * It handles validation (using {@link ValidationService}) and caches the result for easy access by the view layer.
    */
   export class AttributeMetadata {
 
@@ -16,6 +19,9 @@ module formsjs {
 
     /**
      * Constructor.
+     *
+     * @param form Forms JS form
+     * @param fieldName Attribute key within form data object
      */
     constructor(form:Form, fieldName:string) {
       this.fieldName_ = fieldName;
@@ -54,7 +60,7 @@ module formsjs {
     }
 
     /**
-     * Reset the metadata to its initial, pristine state (with no validation data).
+     * Reset metadata to its initial, pristine state.
      */
     public reset():void {
       this.errorMessages_ = [];
@@ -63,6 +69,10 @@ module formsjs {
 
     /**
      * Validate (or re-validate) this field.
+     *
+     * <p>This method will also update the cached validation state once validation has completed.
+     *
+     * @return Promise to be resolved or rejected upon validation completion.
      */
     public validate():Promise<any> {
       var promise:Promise<any> =
