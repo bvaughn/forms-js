@@ -1,9 +1,54 @@
 /// <reference path="../definitions/es6-promise.d.ts" />
 declare module formsjs {
     /**
+     * Metadata for a single form attribute (e.g. username).
+     */
+    class AttributeMetadata {
+        private disabled_;
+        private errorMessages_;
+        private fieldName_;
+        private form_;
+        private pristine_;
+        private uuid_;
+        /**
+         * Constructor.
+         */
+        constructor(form: Form, fieldName: string);
+        /**
+         * This field's view (input) should be disabled.
+         *
+         * <p>This value may indicate that the form is currently being submitted.
+         */
+        disabled: boolean;
+        /**
+         * Error messages for this field as of the time it was last validated.
+         */
+        errorMessages: Array<string>;
+        /**
+         * This is a required field.
+         *
+         * @private
+         * A note about why we treat 'required' differently even though is just another validation constraint:
+         * It's a common request for forms to display a 'required' marker (in the HTML) for required fields.
+         */
+        required: boolean;
+        /**
+         * Reset the metadata to its initial, pristine state (with no validation data).
+         */
+        reset(): void;
+        /**
+         * Validate (or re-validate) this field.
+         */
+        validate(): Promise<any>;
+    }
+}
+declare module formsjs {
+    /**
      * Forms JS form represents a collection of validatable data.
      */
     class Form {
+        private fieldNameToAttributeMetadata_;
+        private formData_;
         private strings_;
         private validationSchema_;
         /**
@@ -15,6 +60,10 @@ declare module formsjs {
          */
         createValidationService(): ValidationService;
         /**
+         * The POJO being edited by this form.
+         */
+        formData: any;
+        /**
          * Set the strings for this specific form.
          * See {@link Strings}.
          */
@@ -23,6 +72,16 @@ declare module formsjs {
          * This form's validations schema.
          */
         validationSchema: ValidationSchema;
+        /**
+         * Register a field with the form.
+         *
+         * <p>All registered form-fields must be valid before the form will enable submission.
+         */
+        registerAttribute(fieldName: string): AttributeMetadata;
+        /**
+         * Unregister a form field.
+         */
+        unregisterAttribute(fieldName: string): void;
     }
 }
 declare module formsjs {
@@ -236,6 +295,18 @@ declare module formsjs {
 declare module formsjs {
     class Flatten {
         static flatten(object: any): Array<string>;
+    }
+}
+declare module formsjs {
+    /**
+     * UID generator for formFor input fields.
+     * @see http://stackoverflow.com/questions/6248666/how-to-generate-short-uid-like-ax4j9z-in-js
+     */
+    class UID {
+        /**
+         * Create a new UID.
+         */
+        static create(): string;
     }
 }
 declare module formsjs {

@@ -7,6 +7,88 @@
     root.formsjs = factory();
   }
 }(this, function() {
+/// <reference path="../definitions/es6-promise.d.ts" />
+var formsjs;
+(function (formsjs) {
+    /**
+     * Metadata for a single form attribute (e.g. username).
+     */
+    var AttributeMetadata = (function () {
+        /**
+         * Constructor.
+         */
+        function AttributeMetadata(form, fieldName) {
+            this.fieldName_ = fieldName;
+            this.form_ = form;
+            this.disabled_ = false;
+            this.errorMessages_ = [];
+            this.pristine_ = true;
+            this.uuid_ = formsjs.UID.create();
+        }
+        Object.defineProperty(AttributeMetadata.prototype, "disabled", {
+            /**
+             * This field's view (input) should be disabled.
+             *
+             * <p>This value may indicate that the form is currently being submitted.
+             */
+            get: function () {
+                return this.disabled_;
+            },
+            set: function (value) {
+                this.disabled_ = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(AttributeMetadata.prototype, "errorMessages", {
+            /**
+             * Error messages for this field as of the time it was last validated.
+             */
+            get: function () {
+                return this.errorMessages_;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(AttributeMetadata.prototype, "required", {
+            /**
+             * This is a required field.
+             *
+             * @private
+             * A note about why we treat 'required' differently even though is just another validation constraint:
+             * It's a common request for forms to display a 'required' marker (in the HTML) for required fields.
+             */
+            get: function () {
+                var validatableAttribute = this.form_.validationSchema[this.fieldName_];
+                return validatableAttribute && validatableAttribute.required;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        /**
+         * Reset the metadata to its initial, pristine state (with no validation data).
+         */
+        AttributeMetadata.prototype.reset = function () {
+            this.errorMessages_ = [];
+            this.pristine_ = true;
+        };
+        /**
+         * Validate (or re-validate) this field.
+         */
+        AttributeMetadata.prototype.validate = function () {
+            var _this = this;
+            var promise = this.form_.createValidationService().validateField(this.fieldName_, this.form_.formData, this.form_.validationSchema);
+            promise.then(function () {
+                _this.errorMessages_ = [];
+            }, function (errorMessages) {
+                _this.errorMessages_ = errorMessages;
+            });
+            return promise;
+        };
+        return AttributeMetadata;
+    })();
+    formsjs.AttributeMetadata = AttributeMetadata;
+})(formsjs || (formsjs = {}));
 var formsjs;
 (function (formsjs) {
     /**
@@ -17,6 +99,8 @@ var formsjs;
          * Constructor.
          */
         function Form() {
+            this.fieldNameToAttributeMetadata_ = {};
+            this.formData = {};
             this.strings_ = new formsjs.Strings();
         }
         /**
@@ -25,6 +109,19 @@ var formsjs;
         Form.prototype.createValidationService = function () {
             return new formsjs.ValidationService(this.strings);
         };
+        Object.defineProperty(Form.prototype, "formData", {
+            /**
+             * The POJO being edited by this form.
+             */
+            get: function () {
+                return this.formData_;
+            },
+            set: function (value) {
+                this.formData_ = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(Form.prototype, "strings", {
             /**
              * Set the strings for this specific form.
@@ -52,6 +149,25 @@ var formsjs;
             enumerable: true,
             configurable: true
         });
+        /**
+         * Register a field with the form.
+         *
+         * <p>All registered form-fields must be valid before the form will enable submission.
+         */
+        Form.prototype.registerAttribute = function (fieldName) {
+            if (this.fieldNameToAttributeMetadata_[fieldName]) {
+                throw Error("Attribute \"" + fieldName + "\" has already been registered");
+            }
+            var attributeMetadata = new formsjs.AttributeMetadata(this, fieldName);
+            this.fieldNameToAttributeMetadata_[fieldName] = attributeMetadata;
+            return attributeMetadata;
+        };
+        /**
+         * Unregister a form field.
+         */
+        Form.prototype.unregisterAttribute = function (fieldName) {
+            delete this.fieldNameToAttributeMetadata_[fieldName];
+        };
         return Form;
     })();
     formsjs.Form = Form;
@@ -274,6 +390,25 @@ var formsjs;
     })();
     formsjs.Flatten = Flatten;
 })(formsjs || (formsjs = {}));
+var formsjs;
+(function (formsjs) {
+    /**
+     * UID generator for formFor input fields.
+     * @see http://stackoverflow.com/questions/6248666/how-to-generate-short-uid-like-ax4j9z-in-js
+     */
+    var UID = (function () {
+        function UID() {
+        }
+        /**
+         * Create a new UID.
+         */
+        UID.create = function () {
+            return ("0000" + (Math.random() * Math.pow(36, 4) << 0).toString(36)).slice(-4);
+        };
+        return UID;
+    })();
+    formsjs.UID = UID;
+})(formsjs || (formsjs = {}));
 /// <reference path="../../definitions/es6-promise.d.ts" />
 var formsjs;
 (function (formsjs) {
@@ -349,6 +484,17 @@ var formsjs;
             enumerable: true,
             configurable: true
         });
+        /*
+         public validate(formData:any, validationSchema:ValidationSchema):Promise<any> {
+         var flattenedFieldNames:Array<string> = Flatten.flatten(formData);
+    
+         flattenedFieldNames.forEach((fieldName:string) => {
+         this.validateField(fieldName, formData, validationSchema);
+         });
+    
+         return null; // TODO
+         }
+         */
         /**
          * Validates an individual attribute (specified by fieldName) according to the provided validation rules.
          *
@@ -362,7 +508,8 @@ var formsjs;
             // See https://github.com/bvaughn/angular-form-for/blob/type-script/source/utils/nested-object-helper.ts#L30
             var value = formData[fieldName];
             var validatableAttribute = validationSchema[fieldName];
-            return new formsjs.ValidationPromiseBuilder().add(new formsjs.RequiredValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.TypeValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.MinMaxValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.EnumValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.PatternValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.CustomValidator(this.strings).validate(value, formData, validatableAttribute)).build();
+            var promise = new formsjs.ValidationPromiseBuilder().add(new formsjs.RequiredValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.TypeValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.MinMaxValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.EnumValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.PatternValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.CustomValidator(this.strings).validate(value, formData, validatableAttribute)).build();
+            return promise;
         };
         return ValidationService;
     })();
