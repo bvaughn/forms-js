@@ -37,7 +37,6 @@ describe('CustomValidator:', function() {
 
     expect(promises.length).toBe(1);
     expect(promises[0]).toBeRejected();
-    expect(promises[0]).toBeRejectedWith(formsjs.Strings.customValidationFailed);
   });
 
   it('should treat strings returned from custom validator functions as error messages', function() {

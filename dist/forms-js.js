@@ -563,6 +563,11 @@ var formsjs;
             if (validatableAttribute.validators) {
                 validatableAttribute.validators.forEach(function (validatorFunction) {
                     var resolution = validatorFunction(value, formData);
+                    // Custom validators can return 3 types of data: a Promise, a string, or a truthy/falsy value.
+                    // If a Promise is returned we must decorate it in order to ensure a reasonable failure message.
+                    // Else if a (non-empty) string is returned we should consider it a failed validation.
+                    // Lastly if a falsy value is returned we should consider it a failed validation as well.
+                    // All of the above cases should be wrapped in a Promise to be consistent with the validator interface.
                     if (resolution instanceof Promise) {
                         promises.push(new Promise(function (resolve, reject) {
                             resolution.then(function () {
@@ -578,7 +583,7 @@ var formsjs;
                         promises.push(Promise.reject(resolution));
                     }
                     else if (!resolution) {
-                        promises.push(Promise.reject(_this.strings.customValidationFailed));
+                        promises.push(Promise.reject(_this.strings.customValidationFailed.replace('${value}', value)));
                     }
                 });
             }
