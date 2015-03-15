@@ -5,13 +5,13 @@ describe('RequiredValidator:', function() {
   var validator;
 
   beforeEach(function() {
-    JasminePromisMatchers.install();
+    JasminePromiseMatchers.install();
 
     validator = new formsjs.MinMaxValidator();
   });
 
   afterEach(function() {
-    JasminePromisMatchers.uninstall();
+    JasminePromiseMatchers.uninstall();
   });
 
   describe('minimum:', function() {

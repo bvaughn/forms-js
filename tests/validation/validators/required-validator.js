@@ -5,7 +5,7 @@ describe('RequiredValidator:', function() {
   var validator;
 
   beforeEach(function() {
-    JasminePromisMatchers.install();
+    JasminePromiseMatchers.install();
 
     validator = new formsjs.RequiredValidator();
 
@@ -15,7 +15,7 @@ describe('RequiredValidator:', function() {
   });
 
   afterEach(function() {
-    JasminePromisMatchers.uninstall();
+    JasminePromiseMatchers.uninstall();
   });
 
   it('should accept truthy values', function() {

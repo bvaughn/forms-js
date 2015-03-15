@@ -6,7 +6,7 @@ describe('TypeValidator:', function() {
   var Type;
 
   beforeEach(function() {
-    JasminePromisMatchers.install();
+    JasminePromiseMatchers.install();
 
     validator = new formsjs.TypeValidator();
     Type = formsjs.ValidationType;
@@ -15,7 +15,7 @@ describe('TypeValidator:', function() {
   });
 
   afterEach(function() {
-    JasminePromisMatchers.uninstall();
+    JasminePromiseMatchers.uninstall();
   });
 
   it('should reject falsy values with custom failure message', function() {

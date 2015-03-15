@@ -6,7 +6,7 @@ describe('ValidationService:', function() {
   var validationService;
 
   beforeEach(function () {
-    JasminePromisMatchers.install();
+    JasminePromiseMatchers.install();
 
     validatableAttribute = {};
     validationSchema = {
@@ -17,7 +17,7 @@ describe('ValidationService:', function() {
   });
 
   afterEach(function () {
-    JasminePromisMatchers.uninstall();
+    JasminePromiseMatchers.uninstall();
   });
 
   describe('validateField:', function() {

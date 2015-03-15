@@ -4,13 +4,13 @@ describe('ValidationPromiseBuilder:', function() {
   var validationPromiseBuilder;
 
   beforeEach(function () {
-    JasminePromisMatchers.install();
+    JasminePromiseMatchers.install();
 
     validationPromiseBuilder = new formsjs.ValidationPromiseBuilder();
   });
 
   afterEach(function () {
-    JasminePromisMatchers.uninstall();
+    JasminePromiseMatchers.uninstall();
   });
 
   it('should resolve an empty array of Promises', function () {

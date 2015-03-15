@@ -5,7 +5,7 @@ describe('CustomValidator:', function() {
   var validator;
 
   beforeEach(function() {
-    JasminePromisMatchers.install();
+    JasminePromiseMatchers.install();
 
     validator = new formsjs.CustomValidator();
 
@@ -15,7 +15,7 @@ describe('CustomValidator:', function() {
   });
 
   afterEach(function() {
-    JasminePromisMatchers.uninstall();
+    JasminePromiseMatchers.uninstall();
   });
 
   it('should ignore truthy values (since they are akin to resolved promises)', function() {

@@ -5,7 +5,7 @@ describe('PatternValidator:', function() {
   var validator;
 
   beforeEach(function() {
-    JasminePromisMatchers.install();
+    JasminePromiseMatchers.install();
 
     validator = new formsjs.PatternValidator();
 
@@ -15,7 +15,7 @@ describe('PatternValidator:', function() {
   });
 
   afterEach(function() {
-    JasminePromisMatchers.uninstall();
+    JasminePromiseMatchers.uninstall();
   });
 
   it('should accept matching values', function() {

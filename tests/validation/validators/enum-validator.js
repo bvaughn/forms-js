@@ -5,13 +5,13 @@ describe('RequiredValidator:', function() {
   var validator;
 
   beforeEach(function() {
-    JasminePromisMatchers.install();
+    JasminePromiseMatchers.install();
 
     validator = new formsjs.EnumValidator();
   });
 
   afterEach(function() {
-    JasminePromisMatchers.uninstall();
+    JasminePromiseMatchers.uninstall();
   });
 
   it('should reject values that are not within the set of enums with custom failure message', function() {
