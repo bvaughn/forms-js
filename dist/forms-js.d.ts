@@ -234,6 +234,11 @@ declare module formsjs {
     }
 }
 declare module formsjs {
+    class Flatten {
+        static flatten(object: any): Array<string>;
+    }
+}
+declare module formsjs {
     class ValidationPromiseBuilder {
         private failureMessages_;
         private promise_;

@@ -241,6 +241,42 @@ var formsjs;
 /// <reference path="../../definitions/es6-promise.d.ts" />
 var formsjs;
 (function (formsjs) {
+    var Flatten = (function () {
+        function Flatten() {
+        }
+        Flatten.flatten = function (object) {
+            var keys = [];
+            var queue = [{
+                object: object,
+                prefix: null
+            }];
+            while (true) {
+                if (queue.length === 0) {
+                    break;
+                }
+                var data = queue.pop();
+                var prefix = data.prefix ? data.prefix + '.' : '';
+                if (typeof data.object === 'object') {
+                    for (var prop in data.object) {
+                        var path = prefix + prop;
+                        var value = data.object[prop];
+                        keys.push(path);
+                        queue.push({
+                            object: value,
+                            prefix: path
+                        });
+                    }
+                }
+            }
+            return keys;
+        };
+        return Flatten;
+    })();
+    formsjs.Flatten = Flatten;
+})(formsjs || (formsjs = {}));
+/// <reference path="../../definitions/es6-promise.d.ts" />
+var formsjs;
+(function (formsjs) {
     var ValidationPromiseBuilder = (function () {
         function ValidationPromiseBuilder(promises) {
             this.promises_ = promises || [];
