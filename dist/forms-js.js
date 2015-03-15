@@ -574,6 +574,9 @@ var formsjs;
                             });
                         }));
                     }
+                    else if (typeof resolution === 'string' && resolution) {
+                        promises.push(Promise.reject(resolution));
+                    }
                     else if (!resolution) {
                         promises.push(Promise.reject(_this.strings.customValidationFailed));
                     }

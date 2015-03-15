@@ -40,6 +40,18 @@ describe('CustomValidator:', function() {
     expect(promises[0]).toBeRejectedWith(formsjs.Strings.customValidationFailed);
   });
 
+  it('should treat strings returned from custom validator functions as error messages', function() {
+    validatableAttribute.validators.push(function() {
+      return 'This is an error message';
+    });
+
+    var promises = validator.validate('foo', {}, validatableAttribute);
+
+    expect(promises.length).toBe(1);
+    expect(promises[0]).toBeRejected();
+    expect(promises[0]).toBeRejectedWith('This is an error message');
+  });
+
   it('should return a default failure message for promises rejected without arguments', function() {
     validatableAttribute.validators.push(function() {
       return new Promise(

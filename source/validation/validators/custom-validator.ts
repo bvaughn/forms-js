@@ -31,6 +31,8 @@ module formsjs {
                         reject(failureMessage);
                       });
                   }));
+            } else if (typeof resolution === 'string' && resolution) {
+              promises.push(Promise.reject(resolution));
             } else if (!resolution) {
               promises.push(Promise.reject(this.strings.customValidationFailed));
             }
