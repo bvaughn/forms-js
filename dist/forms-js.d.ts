@@ -44,7 +44,10 @@ declare module formsjs {
 }
 declare module formsjs {
     /**
-     * Forms JS form represents a collection of validatable data.
+     * A collection of validatable data.
+     *
+     * <p>Despite its name, this is not an HTMLFormElement nor does it directly interact with one.
+     * This object is responsible for tracking fields/inputs and ensuring their validity before allowing a submit action.
      */
     class Form {
         private fieldNameToAttributeMetadata_;
@@ -82,6 +85,10 @@ declare module formsjs {
          * Unregister a form field.
          */
         unregisterAttribute(fieldName: string): void;
+        /**
+         * Validate all form-fields in preparation for submission.
+         */
+        validate(): Promise<any>;
     }
 }
 declare module formsjs {

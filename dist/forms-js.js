@@ -92,7 +92,10 @@ var formsjs;
 var formsjs;
 (function (formsjs) {
     /**
-     * Forms JS form represents a collection of validatable data.
+     * A collection of validatable data.
+     *
+     * <p>Despite its name, this is not an HTMLFormElement nor does it directly interact with one.
+     * This object is responsible for tracking fields/inputs and ensuring their validity before allowing a submit action.
      */
     var Form = (function () {
         /**
@@ -167,6 +170,13 @@ var formsjs;
          */
         Form.prototype.unregisterAttribute = function (fieldName) {
             delete this.fieldNameToAttributeMetadata_[fieldName];
+        };
+        /**
+         * Validate all form-fields in preparation for submission.
+         */
+        Form.prototype.validate = function () {
+            // TODO Roll through all registered fields (AttributeMetadatas) and revalidate...
+            return Promise.reject('Coming soon!');
         };
         return Form;
     })();
