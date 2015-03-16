@@ -167,6 +167,52 @@ declare module formsjs {
     }
 }
 declare module formsjs {
+    class Flatten {
+        /**
+         * Return a (1-dimensional) array of keys representing an object.
+         *
+         * <p>For example, <code>{foo: {bar: 'baz'}}</code> will become flattened into <code>'['foo', 'foo.bar']</code>.
+         *
+         * <p>Arrays can also be flattened.
+         * Their flattened keys will take the form of 'myArray[0]' and 'myArray[0].myNestedProperty'.
+         */
+        static flatten(object: any): Array<string>;
+        /**
+         * Returns the property value of the flattened key or undefined if the property does not exist.
+         *
+         * <p>For example, the key 'foo.bar' would return "baz" for the object <code>{foo: {bar: "baz"}}</code>.
+         * The key 'foo[1].baz' would return 2 for the object <code>{foo: [{bar: 1}, {baz: 2}]}</code>.
+         */
+        static read(flattenedKey: string, object: any): any;
+        /**
+         * Writes a value to the location specified by a flattened key and creates nested structure along the way as needed.
+         *
+         * <p>For example, writing "baz" to the key 'foo.bar' would result in an object <code>{foo: {bar: "baz"}}</code>.
+         * Writing 3 to the key 'foo[0].bar' would result in an object <code>{foo: [{bar: 3}]}</code>.
+         */
+        static write(value: any, flattenedKey: string, object: any): void;
+        /**
+         * Helper method for initializing a missing property.
+         *
+         * @throws Error if unrecognized property specified
+         * @throws Error if property already exists of an incorrect type
+         */
+        private static createPropertyIfMissing_(key, object, propertyType);
+    }
+}
+declare module formsjs {
+    /**
+     * UID generator for formFor input fields.
+     * @see http://stackoverflow.com/questions/6248666/how-to-generate-short-uid-like-ax4j9z-in-js
+     */
+    class UID {
+        /**
+         * Create a new UID.
+         */
+        static create(): string;
+    }
+}
+declare module formsjs {
     /**
      * Supported type validations.
      */
@@ -317,41 +363,6 @@ declare module formsjs {
 declare module formsjs {
     interface Validator {
         validate(value: any, formData: any, validatableAttribute: ValidatableAttribute): Array<Promise<string>>;
-    }
-}
-declare module formsjs {
-    class Flatten {
-        /**
-         * Return a (1-dimensional) array of keys representing an object.
-         *
-         * <p>For example, <code>{foo: {bar: 'baz'}}</code> will become flattened into <code>'['foo', 'foo.bar']</code>.
-         */
-        static flatten(object: any): Array<string>;
-        /**
-         * Returns the property value of the flattened key or undefined if the property does not exist.
-         *
-         * <p>For example, the key 'foo.bar' would return "baz" for the object <code>{foo: {bar: "baz"}}</code>.
-         */
-        static read(flattenedKey: string, object: any): any;
-        /**
-         * Writes a value to the location specified by a flattened key and creates nested structure along the way as needed.
-         *
-         * <p>For example, writing "baz" to the key 'foo.bar' would result in an object <code>{foo: {bar: "baz"}}</code>.
-         */
-        static write(value: any, flattenedKey: string, object: any): void;
-        private static createPropertyIfMissing_(key, object, propertyType);
-    }
-}
-declare module formsjs {
-    /**
-     * UID generator for formFor input fields.
-     * @see http://stackoverflow.com/questions/6248666/how-to-generate-short-uid-like-ax4j9z-in-js
-     */
-    class UID {
-        /**
-         * Create a new UID.
-         */
-        static create(): string;
     }
 }
 declare module formsjs {

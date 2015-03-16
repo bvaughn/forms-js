@@ -8,6 +8,9 @@ module formsjs {
      * Return a (1-dimensional) array of keys representing an object.
      *
      * <p>For example, <code>{foo: {bar: 'baz'}}</code> will become flattened into <code>'['foo', 'foo.bar']</code>.
+     *
+     * <p>Arrays can also be flattened.
+     * Their flattened keys will take the form of 'myArray[0]' and 'myArray[0].myNestedProperty'.
      */
     public static flatten(object:any):Array<string> {
       var keys:Array<string> = [];
@@ -47,6 +50,7 @@ module formsjs {
      * Returns the property value of the flattened key or undefined if the property does not exist.
      *
      * <p>For example, the key 'foo.bar' would return "baz" for the object <code>{foo: {bar: "baz"}}</code>.
+     * The key 'foo[1].baz' would return 2 for the object <code>{foo: [{bar: 1}, {baz: 2}]}</code>.
      */
     public static read(flattenedKey:string, object:any):any {
       var keys:Array<string> = flattenedKey.split(/[\.\[\]]/);
@@ -79,6 +83,7 @@ module formsjs {
      * Writes a value to the location specified by a flattened key and creates nested structure along the way as needed.
      *
      * <p>For example, writing "baz" to the key 'foo.bar' would result in an object <code>{foo: {bar: "baz"}}</code>.
+     * Writing 3 to the key 'foo[0].bar' would result in an object <code>{foo: [{bar: 3}]}</code>.
      */
     public static write(value:any, flattenedKey:string, object:any):void {
       var currentKey:any;
@@ -144,6 +149,12 @@ module formsjs {
       }
     }
 
+    /**
+     * Helper method for initializing a missing property.
+     *
+     * @throws Error if unrecognized property specified
+     * @throws Error if property already exists of an incorrect type
+     */
     private static createPropertyIfMissing_(key:string, object:any, propertyType:any):void {
       switch(propertyType) {
         case Array:

@@ -155,5 +155,15 @@ describe('NestedObjectHelper:', function() {
       expect(object[0] instanceof Array).toBeTruthy();
       expect(object[0][0]).toBe('inner');
     });
+
+    it('should error if an Array is specified at a key containing an object or primative', function() {
+      var keys = ['object[0]', 'string[0]', 'number[0]'];
+
+      keys.forEach(function(key) {
+        expect(function() {
+          flatten.write('foo', key, object);
+        }).toThrow();
+      });
+    });
   });
 });

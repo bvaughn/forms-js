@@ -392,21 +392,6 @@ var formsjs;
     })();
     formsjs.Strings = Strings;
 })(formsjs || (formsjs = {}));
-var formsjs;
-(function (formsjs) {
-    /**
-     * Supported type validations.
-     */
-    (function (ValidationType) {
-        ValidationType[ValidationType["BOOLEAN"] = "boolean"] = "BOOLEAN";
-        ValidationType[ValidationType["FLOAT"] = "float"] = "FLOAT";
-        ValidationType[ValidationType["INTEGER"] = "integer"] = "INTEGER";
-        ValidationType[ValidationType["STRING"] = "string"] = "STRING";
-    })(formsjs.ValidationType || (formsjs.ValidationType = {}));
-    var ValidationType = formsjs.ValidationType;
-})(formsjs || (formsjs = {}));
-/// <reference path="../../definitions/es6-promise.d.ts" />
-/// <reference path="../../definitions/es6-promise.d.ts" />
 /// <reference path="../../definitions/es6-promise.d.ts" />
 var formsjs;
 (function (formsjs) {
@@ -417,6 +402,9 @@ var formsjs;
          * Return a (1-dimensional) array of keys representing an object.
          *
          * <p>For example, <code>{foo: {bar: 'baz'}}</code> will become flattened into <code>'['foo', 'foo.bar']</code>.
+         *
+         * <p>Arrays can also be flattened.
+         * Their flattened keys will take the form of 'myArray[0]' and 'myArray[0].myNestedProperty'.
          */
         Flatten.flatten = function (object) {
             var keys = [];
@@ -448,6 +436,7 @@ var formsjs;
          * Returns the property value of the flattened key or undefined if the property does not exist.
          *
          * <p>For example, the key 'foo.bar' would return "baz" for the object <code>{foo: {bar: "baz"}}</code>.
+         * The key 'foo[1].baz' would return 2 for the object <code>{foo: [{bar: 1}, {baz: 2}]}</code>.
          */
         Flatten.read = function (flattenedKey, object) {
             var keys = flattenedKey.split(/[\.\[\]]/);
@@ -473,6 +462,7 @@ var formsjs;
          * Writes a value to the location specified by a flattened key and creates nested structure along the way as needed.
          *
          * <p>For example, writing "baz" to the key 'foo.bar' would result in an object <code>{foo: {bar: "baz"}}</code>.
+         * Writing 3 to the key 'foo[0].bar' would result in an object <code>{foo: [{bar: 3}]}</code>.
          */
         Flatten.write = function (value, flattenedKey, object) {
             var currentKey;
@@ -527,6 +517,12 @@ var formsjs;
                 object[currentKey] = value;
             }
         };
+        /**
+         * Helper method for initializing a missing property.
+         *
+         * @throws Error if unrecognized property specified
+         * @throws Error if property already exists of an incorrect type
+         */
         Flatten.createPropertyIfMissing_ = function (key, object, propertyType) {
             switch (propertyType) {
                 case Array:
@@ -573,6 +569,21 @@ var formsjs;
     })();
     formsjs.UID = UID;
 })(formsjs || (formsjs = {}));
+var formsjs;
+(function (formsjs) {
+    /**
+     * Supported type validations.
+     */
+    (function (ValidationType) {
+        ValidationType[ValidationType["BOOLEAN"] = "boolean"] = "BOOLEAN";
+        ValidationType[ValidationType["FLOAT"] = "float"] = "FLOAT";
+        ValidationType[ValidationType["INTEGER"] = "integer"] = "INTEGER";
+        ValidationType[ValidationType["STRING"] = "string"] = "STRING";
+    })(formsjs.ValidationType || (formsjs.ValidationType = {}));
+    var ValidationType = formsjs.ValidationType;
+})(formsjs || (formsjs = {}));
+/// <reference path="../../definitions/es6-promise.d.ts" />
+/// <reference path="../../definitions/es6-promise.d.ts" />
 /// <reference path="../../definitions/es6-promise.d.ts" />
 var formsjs;
 (function (formsjs) {
