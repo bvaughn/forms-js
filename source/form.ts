@@ -12,21 +12,16 @@ module formsjs {
     private formData_:any;
     private strings_:Strings;
     private validationSchema_:ValidationSchema;
+    private validationService_:ValidationService;
 
     /**
      * Constructor.
      */
     constructor() {
       this.fieldNameToAttributeMetadata_ = {};
-      this.formData = {};
+      this.formData_ = {};
       this.strings_ = new Strings();
-    }
-
-    /**
-     * Returns a ValidationService configured for the current Form.
-     */
-    public createValidationService():ValidationService {
-      return new ValidationService(this.strings);
+      this.validationService_ = new ValidationService(this.strings_);
     }
 
     /**
@@ -40,13 +35,21 @@ module formsjs {
      * See {@link Strings}.
      */
     public get strings():Strings { return this.strings_; }
-    public set strings(value:Strings) { this.strings_ = value; }
+    public set strings(value:Strings) {
+      this.strings_ = value;
+      this.validationService_.strings = value;
+    }
 
     /**
      * This form's validations schema.
      */
     public get validationSchema():ValidationSchema { return this.validationSchema_; }
     public set validationSchema(value:ValidationSchema) { this.validationSchema_ = value; }
+
+    /**
+     * Returns a ValidationService configured for the current Form.
+     */
+    get validationService():ValidationService { return this.validationService_; }
 
     /**
      * Register a field with the form.
@@ -76,8 +79,15 @@ module formsjs {
      * Validate all form-fields in preparation for submission.
      */
     public validate():Promise<any> {
-      // TODO Roll through all registered fields (AttributeMetadatas) and revalidate...
-      return Promise.reject('Coming soon!');
+      var promises:Array<Promise<any>> = [];
+
+      for (var fieldName in this.fieldNameToAttributeMetadata_) {
+        var attributeMetadata:AttributeMetadata = this.fieldNameToAttributeMetadata_[fieldName];
+
+        promises.push(attributeMetadata.validate());
+      }
+
+      return Promise.all(promises);
     }
 
     // TODO Decide how to handle:

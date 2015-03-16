@@ -6,28 +6,22 @@ module formsjs {
 
     protected strings_:Strings;
 
+    /**
+     * Constructor.
+     */
     constructor(strings?:Strings) {
       this.strings_ = strings || new Strings();
     }
 
+    /**
+     * Default validation failure messages.
+     */
     public get strings():Strings {
       return this.strings_;
     }
     public set strings(value:Strings) {
       this.strings_ = value;
     }
-
-    /*
-     public validate(formData:any, validationSchema:ValidationSchema):Promise<any> {
-     var flattenedFieldNames:Array<string> = Flatten.flatten(formData);
-
-     flattenedFieldNames.forEach((fieldName:string) => {
-     this.validateField(fieldName, formData, validationSchema);
-     });
-
-     return null; // TODO
-     }
-     */
 
     /**
      * Validates an individual attribute (specified by fieldName) according to the provided validation rules.
@@ -38,11 +32,8 @@ module formsjs {
      * @returns Promise that resolves/rejects based on validation outcome.
      */
     public validateField(fieldName:string, formData:any, validationSchema:ValidationSchema):Promise<any> {
-      // TODO Sanitize/escape incoming fieldName to avoid disallowed characters (e.g. ".", "[0]")
-      // See https://github.com/bvaughn/angular-form-for/blob/type-script/source/utils/nested-object-helper.ts#L30
-
-      var value:any = formData[fieldName];
-      var validatableAttribute:ValidatableAttribute = validationSchema[fieldName];
+      var value:any = Flatten.read(fieldName, formData);
+      var validatableAttribute:ValidatableAttribute = Flatten.read(fieldName, validationSchema);
 
       var promise:Promise<any> =
         new ValidationPromiseBuilder()

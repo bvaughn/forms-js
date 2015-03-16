@@ -64,14 +64,11 @@ declare module formsjs {
         private formData_;
         private strings_;
         private validationSchema_;
+        private validationService_;
         /**
          * Constructor.
          */
         constructor();
-        /**
-         * Returns a ValidationService configured for the current Form.
-         */
-        createValidationService(): ValidationService;
         /**
          * The POJO being edited by this form.
          */
@@ -85,6 +82,10 @@ declare module formsjs {
          * This form's validations schema.
          */
         validationSchema: ValidationSchema;
+        /**
+         * Returns a ValidationService configured for the current Form.
+         */
+        validationService: ValidationService;
         /**
          * Register a field with the form.
          *
@@ -370,7 +371,13 @@ declare module formsjs {
 declare module formsjs {
     class ValidationService {
         protected strings_: Strings;
+        /**
+         * Constructor.
+         */
         constructor(strings?: Strings);
+        /**
+         * Default validation failure messages.
+         */
         strings: Strings;
         /**
          * Validates an individual attribute (specified by fieldName) according to the provided validation rules.

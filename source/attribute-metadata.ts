@@ -76,7 +76,7 @@ module formsjs {
      */
     public validate():Promise<any> {
       var promise:Promise<any> =
-        this.form_.createValidationService().validateField(
+        this.form_.validationService.validateField(
           this.fieldName_,
           this.form_.formData,
           this.form_.validationSchema);

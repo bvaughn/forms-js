@@ -87,7 +87,7 @@ var formsjs;
          */
         AttributeMetadata.prototype.validate = function () {
             var _this = this;
-            var promise = this.form_.createValidationService().validateField(this.fieldName_, this.form_.formData, this.form_.validationSchema);
+            var promise = this.form_.validationService.validateField(this.fieldName_, this.form_.formData, this.form_.validationSchema);
             promise.then(function () {
                 _this.errorMessages_ = [];
             }, function (errorMessages) {
@@ -113,15 +113,10 @@ var formsjs;
          */
         function Form() {
             this.fieldNameToAttributeMetadata_ = {};
-            this.formData = {};
+            this.formData_ = {};
             this.strings_ = new formsjs.Strings();
+            this.validationService_ = new formsjs.ValidationService(this.strings_);
         }
-        /**
-         * Returns a ValidationService configured for the current Form.
-         */
-        Form.prototype.createValidationService = function () {
-            return new formsjs.ValidationService(this.strings);
-        };
         Object.defineProperty(Form.prototype, "formData", {
             /**
              * The POJO being edited by this form.
@@ -145,6 +140,7 @@ var formsjs;
             },
             set: function (value) {
                 this.strings_ = value;
+                this.validationService_.strings = value;
             },
             enumerable: true,
             configurable: true
@@ -158,6 +154,16 @@ var formsjs;
             },
             set: function (value) {
                 this.validationSchema_ = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Form.prototype, "validationService", {
+            /**
+             * Returns a ValidationService configured for the current Form.
+             */
+            get: function () {
+                return this.validationService_;
             },
             enumerable: true,
             configurable: true
@@ -185,8 +191,12 @@ var formsjs;
          * Validate all form-fields in preparation for submission.
          */
         Form.prototype.validate = function () {
-            // TODO Roll through all registered fields (AttributeMetadatas) and revalidate...
-            return Promise.reject('Coming soon!');
+            var promises = [];
+            for (var fieldName in this.fieldNameToAttributeMetadata_) {
+                var attributeMetadata = this.fieldNameToAttributeMetadata_[fieldName];
+                promises.push(attributeMetadata.validate());
+            }
+            return Promise.all(promises);
         };
         return Form;
     })();
@@ -602,10 +612,16 @@ var formsjs;
 var formsjs;
 (function (formsjs) {
     var ValidationService = (function () {
+        /**
+         * Constructor.
+         */
         function ValidationService(strings) {
             this.strings_ = strings || new formsjs.Strings();
         }
         Object.defineProperty(ValidationService.prototype, "strings", {
+            /**
+             * Default validation failure messages.
+             */
             get: function () {
                 return this.strings_;
             },
@@ -615,17 +631,6 @@ var formsjs;
             enumerable: true,
             configurable: true
         });
-        /*
-         public validate(formData:any, validationSchema:ValidationSchema):Promise<any> {
-         var flattenedFieldNames:Array<string> = Flatten.flatten(formData);
-    
-         flattenedFieldNames.forEach((fieldName:string) => {
-         this.validateField(fieldName, formData, validationSchema);
-         });
-    
-         return null; // TODO
-         }
-         */
         /**
          * Validates an individual attribute (specified by fieldName) according to the provided validation rules.
          *
@@ -635,10 +640,8 @@ var formsjs;
          * @returns Promise that resolves/rejects based on validation outcome.
          */
         ValidationService.prototype.validateField = function (fieldName, formData, validationSchema) {
-            // TODO Sanitize/escape incoming fieldName to avoid disallowed characters (e.g. ".", "[0]")
-            // See https://github.com/bvaughn/angular-form-for/blob/type-script/source/utils/nested-object-helper.ts#L30
-            var value = formData[fieldName];
-            var validatableAttribute = validationSchema[fieldName];
+            var value = formsjs.Flatten.read(fieldName, formData);
+            var validatableAttribute = formsjs.Flatten.read(fieldName, validationSchema);
             var promise = new formsjs.ValidationPromiseBuilder().add(new formsjs.RequiredValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.TypeValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.MinMaxValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.EnumValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.PatternValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.CustomValidator(this.strings).validate(value, formData, validatableAttribute)).build();
             return promise;
         };
