@@ -76,9 +76,9 @@ module formsjs {
     }
 
     /**
-     * Returns the property value of the flattened key or undefined if the property does not exist.
+     * Writes a value to the location specified by a flattened key and creates nested structure along the way as needed.
      *
-     * <p>For example, the key 'foo.bar' would return "baz" for the object <code>{foo: {bar: "baz"}}</code>.
+     * <p>For example, writing "baz" to the key 'foo.bar' would result in an object <code>{foo: {bar: "baz"}}</code>.
      */
     public static write(value:any, flattenedKey:string, object:any):void {
       var currentKey:any;
