@@ -392,6 +392,21 @@ var formsjs;
     })();
     formsjs.Strings = Strings;
 })(formsjs || (formsjs = {}));
+var formsjs;
+(function (formsjs) {
+    /**
+     * Supported type validations.
+     */
+    (function (ValidationType) {
+        ValidationType[ValidationType["BOOLEAN"] = "boolean"] = "BOOLEAN";
+        ValidationType[ValidationType["FLOAT"] = "float"] = "FLOAT";
+        ValidationType[ValidationType["INTEGER"] = "integer"] = "INTEGER";
+        ValidationType[ValidationType["STRING"] = "string"] = "STRING";
+    })(formsjs.ValidationType || (formsjs.ValidationType = {}));
+    var ValidationType = formsjs.ValidationType;
+})(formsjs || (formsjs = {}));
+/// <reference path="../../definitions/es6-promise.d.ts" />
+/// <reference path="../../definitions/es6-promise.d.ts" />
 /// <reference path="../../definitions/es6-promise.d.ts" />
 var formsjs;
 (function (formsjs) {
@@ -569,21 +584,6 @@ var formsjs;
     })();
     formsjs.UID = UID;
 })(formsjs || (formsjs = {}));
-var formsjs;
-(function (formsjs) {
-    /**
-     * Supported type validations.
-     */
-    (function (ValidationType) {
-        ValidationType[ValidationType["BOOLEAN"] = "boolean"] = "BOOLEAN";
-        ValidationType[ValidationType["FLOAT"] = "float"] = "FLOAT";
-        ValidationType[ValidationType["INTEGER"] = "integer"] = "INTEGER";
-        ValidationType[ValidationType["STRING"] = "string"] = "STRING";
-    })(formsjs.ValidationType || (formsjs.ValidationType = {}));
-    var ValidationType = formsjs.ValidationType;
-})(formsjs || (formsjs = {}));
-/// <reference path="../../definitions/es6-promise.d.ts" />
-/// <reference path="../../definitions/es6-promise.d.ts" />
 /// <reference path="../../definitions/es6-promise.d.ts" />
 var formsjs;
 (function (formsjs) {
