@@ -311,7 +311,25 @@ declare module formsjs {
 }
 declare module formsjs {
     class Flatten {
+        /**
+         * Return a (1-dimensional) array of keys representing an object.
+         *
+         * <p>For example, <code>{foo: {bar: 'baz'}}</code> will become flattened into <code>'['foo', 'foo.bar']</code>.
+         */
         static flatten(object: any): Array<string>;
+        /**
+         * Returns the property value of the flattened key or undefined if the property does not exist.
+         *
+         * <p>For example, the key 'foo.bar' would return "baz" for the object <code>{foo: {bar: "baz"}}</code>.
+         */
+        static read(flattenedKey: string, object: any): any;
+        /**
+         * Returns the property value of the flattened key or undefined if the property does not exist.
+         *
+         * <p>For example, the key 'foo.bar' would return "baz" for the object <code>{foo: {bar: "baz"}}</code>.
+         */
+        static write(value: any, flattenedKey: string, object: any): void;
+        private static createPropertyIfMissing_(key, object, propertyType);
     }
 }
 declare module formsjs {
