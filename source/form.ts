@@ -8,6 +8,7 @@ module formsjs {
    */
   export class Form {
 
+    private disabled_:boolean;
     private fieldNameToAttributeMetadata_:{[fieldName:string]:AttributeMetadata};
     private formData_:any;
     private strings_:Strings;
@@ -22,6 +23,20 @@ module formsjs {
       this.formData_ = {};
       this.strings_ = new Strings();
       this.validationService_ = new ValidationService(this.strings_);
+    }
+
+    /**
+     * This form (and all child input elements) is disabled.
+     */
+    public get disabled():boolean { return this.disabled_; }
+    public set disabled(value:boolean) {
+      this.disabled_ = value;
+
+      Object.keys(this.fieldNameToAttributeMetadata_).forEach(
+        (fieldName:string) => {
+          var attributeMetadata:AttributeMetadata = this.fieldNameToAttributeMetadata_[fieldName];
+          attributeMetadata.disabled = value;
+        });
     }
 
     /**
@@ -76,16 +91,22 @@ module formsjs {
     }
 
     /**
-     * Validate all form-fields in preparation for submission.
+     * Validate all registered form-fields in preparation for submission.
+     *
+     * <p>This method returns a Promise that will resolve if all fields are found valid or reject if any field isn't.
+     * This validation process will also update all {@link AttributeMetadata}s.
+     * This in turn may cause view/binding updates.
      */
     public validate():Promise<any> {
       var promises:Array<Promise<any>> = [];
 
-      for (var fieldName in this.fieldNameToAttributeMetadata_) {
-        var attributeMetadata:AttributeMetadata = this.fieldNameToAttributeMetadata_[fieldName];
 
-        promises.push(attributeMetadata.validate());
-      }
+      Object.keys(this.fieldNameToAttributeMetadata_).forEach(
+        (fieldName:string) => {
+          var attributeMetadata:AttributeMetadata = this.fieldNameToAttributeMetadata_[fieldName];
+
+          promises.push(attributeMetadata.validate());
+        });
 
       return Promise.all(promises);
     }

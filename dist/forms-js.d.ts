@@ -60,6 +60,7 @@ declare module formsjs {
      * This object is responsible for tracking fields/inputs and ensuring their validity before allowing a submit action.
      */
     class Form {
+        private disabled_;
         private fieldNameToAttributeMetadata_;
         private formData_;
         private strings_;
@@ -69,6 +70,10 @@ declare module formsjs {
          * Constructor.
          */
         constructor();
+        /**
+         * This form (and all child input elements) is disabled.
+         */
+        disabled: boolean;
         /**
          * The POJO being edited by this form.
          */
@@ -97,7 +102,11 @@ declare module formsjs {
          */
         unregisterAttribute(fieldName: string): void;
         /**
-         * Validate all form-fields in preparation for submission.
+         * Validate all registered form-fields in preparation for submission.
+         *
+         * <p>This method returns a Promise that will resolve if all fields are found valid or reject if any field isn't.
+         * This validation process will also update all {@link AttributeMetadata}s.
+         * This in turn may cause view/binding updates.
          */
         validate(): Promise<any>;
     }

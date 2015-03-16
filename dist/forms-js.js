@@ -117,6 +117,24 @@ var formsjs;
             this.strings_ = new formsjs.Strings();
             this.validationService_ = new formsjs.ValidationService(this.strings_);
         }
+        Object.defineProperty(Form.prototype, "disabled", {
+            /**
+             * This form (and all child input elements) is disabled.
+             */
+            get: function () {
+                return this.disabled_;
+            },
+            set: function (value) {
+                var _this = this;
+                this.disabled_ = value;
+                Object.keys(this.fieldNameToAttributeMetadata_).forEach(function (fieldName) {
+                    var attributeMetadata = _this.fieldNameToAttributeMetadata_[fieldName];
+                    attributeMetadata.disabled = value;
+                });
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(Form.prototype, "formData", {
             /**
              * The POJO being edited by this form.
@@ -188,14 +206,19 @@ var formsjs;
             delete this.fieldNameToAttributeMetadata_[fieldName];
         };
         /**
-         * Validate all form-fields in preparation for submission.
+         * Validate all registered form-fields in preparation for submission.
+         *
+         * <p>This method returns a Promise that will resolve if all fields are found valid or reject if any field isn't.
+         * This validation process will also update all {@link AttributeMetadata}s.
+         * This in turn may cause view/binding updates.
          */
         Form.prototype.validate = function () {
+            var _this = this;
             var promises = [];
-            for (var fieldName in this.fieldNameToAttributeMetadata_) {
-                var attributeMetadata = this.fieldNameToAttributeMetadata_[fieldName];
+            Object.keys(this.fieldNameToAttributeMetadata_).forEach(function (fieldName) {
+                var attributeMetadata = _this.fieldNameToAttributeMetadata_[fieldName];
                 promises.push(attributeMetadata.validate());
-            }
+            });
             return Promise.all(promises);
         };
         return Form;
