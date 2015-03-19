@@ -31,6 +31,12 @@ declare module formsjs {
          */
         errorMessages: Array<string>;
         /**
+         * Pristine fields should not display validation error messages.
+         * Once a user has modified the value, the field should no longer be marked as pristine.
+         * On form-submit, fields may also be marked as non-pristine.
+         */
+        pristine: boolean;
+        /**
          * This is a required field.
          *
          * @private
@@ -64,6 +70,7 @@ declare module formsjs {
         private fieldNameToAttributeMetadata_;
         private formData_;
         private strings_;
+        private submitFunction_;
         private validationSchema_;
         private validationService_;
         /**
@@ -84,6 +91,12 @@ declare module formsjs {
          */
         strings: Strings;
         /**
+         * On submit, if form data is valid, Form JS will call this function.
+         * This function is responsible for submitting the data.
+         * It should return a Promise to be resolved or rejected once the submit request completes.
+         */
+        submitFunction: (data: any) => Promise<any>;
+        /**
          * This form's validations schema.
          */
         validationSchema: ValidationSchema;
@@ -98,6 +111,11 @@ declare module formsjs {
          */
         registerAttribute(fieldName: string): AttributeMetadata;
         /**
+         * Validates form data and invokes the <code>submitWith</code> function if valid.
+         * Returns a promise to be resolved on success or rejected if either validation or submit fails.
+         */
+        submitIfValid(): Promise<any>;
+        /**
          * Unregister a form field.
          */
         unregisterAttribute(fieldName: string): void;
@@ -107,8 +125,11 @@ declare module formsjs {
          * <p>This method returns a Promise that will resolve if all fields are found valid or reject if any field isn't.
          * This validation process will also update all {@link AttributeMetadata}s.
          * This in turn may cause view/binding updates.
+         *
+         * @param showValidationErrors Show validation error messages (even for pristine fields)
          */
-        validate(): Promise<any>;
+        validate(showValidationErrors: boolean): Promise<any>;
+        private processFieldNameToErrorMap_(fieldNameToErrorMap, unsetPristine);
     }
 }
 declare module formsjs {
@@ -164,52 +185,6 @@ declare module formsjs {
         patternValidationFailed: string;
         requiredValidationFailed: string;
         stringTypeValidationFailed: string;
-    }
-}
-declare module formsjs {
-    class Flatten {
-        /**
-         * Return a (1-dimensional) array of keys representing an object.
-         *
-         * <p>For example, <code>{foo: {bar: 'baz'}}</code> will become flattened into <code>'['foo', 'foo.bar']</code>.
-         *
-         * <p>Arrays can also be flattened.
-         * Their flattened keys will take the form of 'myArray[0]' and 'myArray[0].myNestedProperty'.
-         */
-        static flatten(object: any): Array<string>;
-        /**
-         * Returns the property value of the flattened key or undefined if the property does not exist.
-         *
-         * <p>For example, the key 'foo.bar' would return "baz" for the object <code>{foo: {bar: "baz"}}</code>.
-         * The key 'foo[1].baz' would return 2 for the object <code>{foo: [{bar: 1}, {baz: 2}]}</code>.
-         */
-        static read(flattenedKey: string, object: any): any;
-        /**
-         * Writes a value to the location specified by a flattened key and creates nested structure along the way as needed.
-         *
-         * <p>For example, writing "baz" to the key 'foo.bar' would result in an object <code>{foo: {bar: "baz"}}</code>.
-         * Writing 3 to the key 'foo[0].bar' would result in an object <code>{foo: [{bar: 3}]}</code>.
-         */
-        static write(value: any, flattenedKey: string, object: any): void;
-        /**
-         * Helper method for initializing a missing property.
-         *
-         * @throws Error if unrecognized property specified
-         * @throws Error if property already exists of an incorrect type
-         */
-        private static createPropertyIfMissing_(key, object, propertyType);
-    }
-}
-declare module formsjs {
-    /**
-     * UID generator for formFor input fields.
-     * @see http://stackoverflow.com/questions/6248666/how-to-generate-short-uid-like-ax4j9z-in-js
-     */
-    class UID {
-        /**
-         * Create a new UID.
-         */
-        static create(): string;
     }
 }
 declare module formsjs {
@@ -363,6 +338,52 @@ declare module formsjs {
 declare module formsjs {
     interface Validator {
         validate(value: any, formData: any, validatableAttribute: ValidatableAttribute): Array<Promise<string>>;
+    }
+}
+declare module formsjs {
+    class Flatten {
+        /**
+         * Return a (1-dimensional) array of keys representing an object.
+         *
+         * <p>For example, <code>{foo: {bar: 'baz'}}</code> will become flattened into <code>'['foo', 'foo.bar']</code>.
+         *
+         * <p>Arrays can also be flattened.
+         * Their flattened keys will take the form of 'myArray[0]' and 'myArray[0].myNestedProperty'.
+         */
+        static flatten(object: any): Array<string>;
+        /**
+         * Returns the property value of the flattened key or undefined if the property does not exist.
+         *
+         * <p>For example, the key 'foo.bar' would return "baz" for the object <code>{foo: {bar: "baz"}}</code>.
+         * The key 'foo[1].baz' would return 2 for the object <code>{foo: [{bar: 1}, {baz: 2}]}</code>.
+         */
+        static read(flattenedKey: string, object: any): any;
+        /**
+         * Writes a value to the location specified by a flattened key and creates nested structure along the way as needed.
+         *
+         * <p>For example, writing "baz" to the key 'foo.bar' would result in an object <code>{foo: {bar: "baz"}}</code>.
+         * Writing 3 to the key 'foo[0].bar' would result in an object <code>{foo: [{bar: 3}]}</code>.
+         */
+        static write(value: any, flattenedKey: string, object: any): void;
+        /**
+         * Helper method for initializing a missing property.
+         *
+         * @throws Error if unrecognized property specified
+         * @throws Error if property already exists of an incorrect type
+         */
+        private static createPropertyIfMissing_(key, object, propertyType);
+    }
+}
+declare module formsjs {
+    /**
+     * UID generator for formFor input fields.
+     * @see http://stackoverflow.com/questions/6248666/how-to-generate-short-uid-like-ax4j9z-in-js
+     */
+    class UID {
+        /**
+         * Create a new UID.
+         */
+        static create(): string;
     }
 }
 declare module formsjs {

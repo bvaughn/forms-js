@@ -47,6 +47,14 @@ module formsjs {
     public get errorMessages():Array<string> { return this.errorMessages_; }
 
     /**
+     * Pristine fields should not display validation error messages.
+     * Once a user has modified the value, the field should no longer be marked as pristine.
+     * On form-submit, fields may also be marked as non-pristine.
+     */
+    public get pristine():boolean { return this.pristine_; }
+    public set pristine(value:boolean) { this.pristine_ = value; }
+
+    /**
      * This is a required field.
      *
      * @private

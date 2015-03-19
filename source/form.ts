@@ -12,6 +12,7 @@ module formsjs {
     private fieldNameToAttributeMetadata_:{[fieldName:string]:AttributeMetadata};
     private formData_:any;
     private strings_:Strings;
+    private submitFunction_:(data:any) => Promise<any>;
     private validationSchema_:ValidationSchema;
     private validationService_:ValidationService;
 
@@ -56,6 +57,14 @@ module formsjs {
     }
 
     /**
+     * On submit, if form data is valid, Form JS will call this function.
+     * This function is responsible for submitting the data.
+     * It should return a Promise to be resolved or rejected once the submit request completes.
+     */
+    public get submitFunction():(data:any) => Promise<any> { return this.submitFunction_; }
+    public set submitFunction(value:(data:any) => Promise<any>) { this.submitFunction_ = value; }
+
+    /**
      * This form's validations schema.
      */
     public get validationSchema():ValidationSchema { return this.validationSchema_; }
@@ -84,6 +93,42 @@ module formsjs {
     }
 
     /**
+     * Validates form data and invokes the <code>submitWith</code> function if valid.
+     * Returns a promise to be resolved on success or rejected if either validation or submit fails.
+     */
+    public submitIfValid():Promise<any> {
+      if (!this.submitFunction_) {
+        return Promise.reject('No submit function provided');
+      }
+
+      this.disabled = true;
+
+      return new Promise(
+        (resolve:(value?:any) => void, reject:(error?:any) => void) => {
+          this.validate(true).then(
+            () => {
+              this.submitFunction_(this.formData).then(
+                () => {
+                  this.disabled = false;
+
+                  resolve();
+                },
+                (fieldNameToErrorMap:{[fieldName:string]:string}) => {
+                  this.processFieldNameToErrorMap_(fieldNameToErrorMap, true);
+                  this.disabled = false;
+
+                  reject();
+                }
+              );
+            },
+            () => {
+              this.disabled = false;
+            }
+          );
+        });
+    }
+
+    /**
      * Unregister a form field.
      */
     public unregisterAttribute(fieldName:string):void {
@@ -96,10 +141,11 @@ module formsjs {
      * <p>This method returns a Promise that will resolve if all fields are found valid or reject if any field isn't.
      * This validation process will also update all {@link AttributeMetadata}s.
      * This in turn may cause view/binding updates.
+     *
+     * @param showValidationErrors Show validation error messages (even for pristine fields)
      */
-    public validate():Promise<any> {
+    public validate(showValidationErrors:boolean):Promise<any> {
       var promises:Array<Promise<any>> = [];
-
 
       Object.keys(this.fieldNameToAttributeMetadata_).forEach(
         (fieldName:string) => {
@@ -108,12 +154,39 @@ module formsjs {
           promises.push(attributeMetadata.validate());
         });
 
-      return Promise.all(promises);
+      var promise:Promise<any> = Promise.all(<any> promises);
+      promise.then(
+        () => {},
+        (fieldNameToErrorMap:{[fieldName:string]:string}) => {
+          this.processFieldNameToErrorMap_(fieldNameToErrorMap, showValidationErrors);
+        }
+      );
+
+      return promise;
     }
 
-    // TODO Decide how to handle:
-    // 1) Disabling fields while submit is pending or in progress.
-    // 2) Re-enable fields once a submit has completed.
-    // 3) Showing/processing any server-side validation errors in the event of a failed submission.
+    private processFieldNameToErrorMap_(fieldNameToErrorMap:{[fieldName:string]:string}, unsetPristine:boolean) {
+      if (typeof fieldNameToErrorMap === "object") {
+        var fieldNames:Array<string> = Flatten.flatten(fieldNameToErrorMap);
+
+        for (var index = 0, length = fieldNames.length; index < length; index++) {
+          var fieldName = fieldNames[index];
+          var attributeMetadata:AttributeMetadata = this.fieldNameToAttributeMetadata_[fieldName];
+          var errorMessageOrArray:any = fieldNameToErrorMap[fieldName];
+
+          if (attributeMetadata) {
+            if (Array.isArray(errorMessageOrArray)) {
+              attributeMetadata.errorMessages = errorMessageOrArray;
+            } else if (typeof errorMessageOrArray == "string") {
+              attributeMetadata.errorMessages = [errorMessageOrArray];
+            }
+
+            if (unsetPristine) {
+              attributeMetadata.pristine = false;
+            }
+          }
+        }
+      }
+    }
   }
 }

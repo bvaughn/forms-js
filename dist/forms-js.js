@@ -56,6 +56,21 @@ var formsjs;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(AttributeMetadata.prototype, "pristine", {
+            /**
+             * Pristine fields should not display validation error messages.
+             * Once a user has modified the value, the field should no longer be marked as pristine.
+             * On form-submit, fields may also be marked as non-pristine.
+             */
+            get: function () {
+                return this.pristine_;
+            },
+            set: function (value) {
+                this.pristine_ = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(AttributeMetadata.prototype, "required", {
             /**
              * This is a required field.
@@ -163,6 +178,21 @@ var formsjs;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(Form.prototype, "submitFunction", {
+            /**
+             * On submit, if form data is valid, Form JS will call this function.
+             * This function is responsible for submitting the data.
+             * It should return a Promise to be resolved or rejected once the submit request completes.
+             */
+            get: function () {
+                return this.submitFunction_;
+            },
+            set: function (value) {
+                this.submitFunction_ = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(Form.prototype, "validationSchema", {
             /**
              * This form's validations schema.
@@ -200,6 +230,31 @@ var formsjs;
             return attributeMetadata;
         };
         /**
+         * Validates form data and invokes the <code>submitWith</code> function if valid.
+         * Returns a promise to be resolved on success or rejected if either validation or submit fails.
+         */
+        Form.prototype.submitIfValid = function () {
+            var _this = this;
+            if (!this.submitFunction_) {
+                return Promise.reject('No submit function provided');
+            }
+            this.disabled = true;
+            return new Promise(function (resolve, reject) {
+                _this.validate(true).then(function () {
+                    _this.submitFunction_(_this.formData).then(function () {
+                        _this.disabled = false;
+                        resolve();
+                    }, function (fieldNameToErrorMap) {
+                        _this.processFieldNameToErrorMap_(fieldNameToErrorMap, true);
+                        _this.disabled = false;
+                        reject();
+                    });
+                }, function () {
+                    _this.disabled = false;
+                });
+            });
+        };
+        /**
          * Unregister a form field.
          */
         Form.prototype.unregisterAttribute = function (fieldName) {
@@ -211,15 +266,43 @@ var formsjs;
          * <p>This method returns a Promise that will resolve if all fields are found valid or reject if any field isn't.
          * This validation process will also update all {@link AttributeMetadata}s.
          * This in turn may cause view/binding updates.
+         *
+         * @param showValidationErrors Show validation error messages (even for pristine fields)
          */
-        Form.prototype.validate = function () {
+        Form.prototype.validate = function (showValidationErrors) {
             var _this = this;
             var promises = [];
             Object.keys(this.fieldNameToAttributeMetadata_).forEach(function (fieldName) {
                 var attributeMetadata = _this.fieldNameToAttributeMetadata_[fieldName];
                 promises.push(attributeMetadata.validate());
             });
-            return Promise.all(promises);
+            var promise = Promise.all(promises);
+            promise.then(function () {
+            }, function (fieldNameToErrorMap) {
+                _this.processFieldNameToErrorMap_(fieldNameToErrorMap, showValidationErrors);
+            });
+            return promise;
+        };
+        Form.prototype.processFieldNameToErrorMap_ = function (fieldNameToErrorMap, unsetPristine) {
+            if (typeof fieldNameToErrorMap === "object") {
+                var fieldNames = formsjs.Flatten.flatten(fieldNameToErrorMap);
+                for (var index = 0, length = fieldNames.length; index < length; index++) {
+                    var fieldName = fieldNames[index];
+                    var attributeMetadata = this.fieldNameToAttributeMetadata_[fieldName];
+                    var errorMessageOrArray = fieldNameToErrorMap[fieldName];
+                    if (attributeMetadata) {
+                        if (Array.isArray(errorMessageOrArray)) {
+                            attributeMetadata.errorMessages = errorMessageOrArray;
+                        }
+                        else if (typeof errorMessageOrArray == "string") {
+                            attributeMetadata.errorMessages = [errorMessageOrArray];
+                        }
+                        if (unsetPristine) {
+                            attributeMetadata.pristine = false;
+                        }
+                    }
+                }
+            }
         };
         return Form;
     })();
@@ -392,6 +475,21 @@ var formsjs;
     })();
     formsjs.Strings = Strings;
 })(formsjs || (formsjs = {}));
+var formsjs;
+(function (formsjs) {
+    /**
+     * Supported type validations.
+     */
+    (function (ValidationType) {
+        ValidationType[ValidationType["BOOLEAN"] = "boolean"] = "BOOLEAN";
+        ValidationType[ValidationType["FLOAT"] = "float"] = "FLOAT";
+        ValidationType[ValidationType["INTEGER"] = "integer"] = "INTEGER";
+        ValidationType[ValidationType["STRING"] = "string"] = "STRING";
+    })(formsjs.ValidationType || (formsjs.ValidationType = {}));
+    var ValidationType = formsjs.ValidationType;
+})(formsjs || (formsjs = {}));
+/// <reference path="../../definitions/es6-promise.d.ts" />
+/// <reference path="../../definitions/es6-promise.d.ts" />
 /// <reference path="../../definitions/es6-promise.d.ts" />
 var formsjs;
 (function (formsjs) {
@@ -569,21 +667,6 @@ var formsjs;
     })();
     formsjs.UID = UID;
 })(formsjs || (formsjs = {}));
-var formsjs;
-(function (formsjs) {
-    /**
-     * Supported type validations.
-     */
-    (function (ValidationType) {
-        ValidationType[ValidationType["BOOLEAN"] = "boolean"] = "BOOLEAN";
-        ValidationType[ValidationType["FLOAT"] = "float"] = "FLOAT";
-        ValidationType[ValidationType["INTEGER"] = "integer"] = "INTEGER";
-        ValidationType[ValidationType["STRING"] = "string"] = "STRING";
-    })(formsjs.ValidationType || (formsjs.ValidationType = {}));
-    var ValidationType = formsjs.ValidationType;
-})(formsjs || (formsjs = {}));
-/// <reference path="../../definitions/es6-promise.d.ts" />
-/// <reference path="../../definitions/es6-promise.d.ts" />
 /// <reference path="../../definitions/es6-promise.d.ts" />
 var formsjs;
 (function (formsjs) {
