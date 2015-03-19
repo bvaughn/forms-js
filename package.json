@@ -1,6 +1,6 @@
 {
   "name": "forms-js",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "homepage": "https://github.com/forms-js/forms-js",
   "description": "JavaScript library to simplify creating and validating HTML forms.",
   "authors": [
@@ -17,7 +17,7 @@
     "validation"
   ],
   "license": "Apache License Version 2.0,",
-  "main": "gulpfile.js",
+  "main": "dist/forms-js.js",
   "directories": {},
   "dependencies": {},
   "devDependencies": {

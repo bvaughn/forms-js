@@ -274,7 +274,7 @@ declare module formsjs {
          * <p>Use a <code>${value}</code> token to include the attribute's current string value,
          * (e.g. if value is "foobar" then "${value} is not allowed" becomes "foobar is not allowed").
          */
-        patternFailureMessage: string;
+        patternFailureMessage?: string;
         /**
          * This attribute is required.
          *
@@ -284,7 +284,7 @@ declare module formsjs {
         /**
          * Optional custom failure message used in the event of a failed "required" validation.
          */
-        requiredFailureMessage: string;
+        requiredFailureMessage?: string;
         /**
          * Optional primitive attribute type.
          *
@@ -300,7 +300,7 @@ declare module formsjs {
          * <p>Use a <code>${value}</code> token to include the attribute's current string value,
          * (e.g. if value is "foobar" then "${value} is not an allowed type" becomes "foobar is not an allowed type").
          */
-        typeFailureMessage: string;
+        typeFailureMessage?: string;
         /**
          * Set of custom validator functions; see {@link ValidatorFunction}.
          */
