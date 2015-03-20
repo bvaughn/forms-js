@@ -73,6 +73,7 @@ declare module formsjs {
         private submitFunction_;
         private validationSchema_;
         private validationService_;
+        private viewSchema_;
         /**
          * Constructor.
          */
@@ -105,6 +106,10 @@ declare module formsjs {
          */
         validationService: ValidationService;
         /**
+         * Optional view schema for auto-created forms.
+         */
+        viewSchema: ViewSchema;
+        /**
          * Register a field with the form.
          *
          * <p>All registered form-fields must be valid before the form will enable submission.
@@ -130,6 +135,52 @@ declare module formsjs {
          */
         validate(showValidationErrors: boolean): Promise<any>;
         private processFieldNameToErrorMap_(fieldNameToErrorMap, unsetPristine);
+    }
+}
+declare module formsjs {
+    class Flatten {
+        /**
+         * Return a (1-dimensional) array of keys representing an object.
+         *
+         * <p>For example, <code>{foo: {bar: 'baz'}}</code> will become flattened into <code>'['foo', 'foo.bar']</code>.
+         *
+         * <p>Arrays can also be flattened.
+         * Their flattened keys will take the form of 'myArray[0]' and 'myArray[0].myNestedProperty'.
+         */
+        static flatten(object: any): Array<string>;
+        /**
+         * Returns the property value of the flattened key or undefined if the property does not exist.
+         *
+         * <p>For example, the key 'foo.bar' would return "baz" for the object <code>{foo: {bar: "baz"}}</code>.
+         * The key 'foo[1].baz' would return 2 for the object <code>{foo: [{bar: 1}, {baz: 2}]}</code>.
+         */
+        static read(flattenedKey: string, object: any): any;
+        /**
+         * Writes a value to the location specified by a flattened key and creates nested structure along the way as needed.
+         *
+         * <p>For example, writing "baz" to the key 'foo.bar' would result in an object <code>{foo: {bar: "baz"}}</code>.
+         * Writing 3 to the key 'foo[0].bar' would result in an object <code>{foo: [{bar: 3}]}</code>.
+         */
+        static write(value: any, flattenedKey: string, object: any): void;
+        /**
+         * Helper method for initializing a missing property.
+         *
+         * @throws Error if unrecognized property specified
+         * @throws Error if property already exists of an incorrect type
+         */
+        private static createPropertyIfMissing_(key, object, propertyType);
+    }
+}
+declare module formsjs {
+    /**
+     * UID generator for formFor input fields.
+     * @see http://stackoverflow.com/questions/6248666/how-to-generate-short-uid-like-ax4j9z-in-js
+     */
+    class UID {
+        /**
+         * Create a new UID.
+         */
+        static create(): string;
     }
 }
 declare module formsjs {
@@ -189,6 +240,16 @@ declare module formsjs {
 }
 declare module formsjs {
     /**
+     * Input types available for auto-created forms; see {@link FieldView}.
+     */
+    enum InputType {
+        CHECKBOX,
+        RADIO,
+        TEXT,
+    }
+}
+declare module formsjs {
+    /**
      * Supported type validations.
      */
     enum ValidationType {
@@ -196,6 +257,93 @@ declare module formsjs {
         FLOAT,
         INTEGER,
         STRING,
+    }
+}
+declare module formsjs {
+    class ValidationPromiseBuilder {
+        private failureMessages_;
+        private promise_;
+        private promiseRejecter_;
+        private promiseResolver_;
+        private promises_;
+        constructor(promises?: Array<Promise<any>>);
+        /**
+         * Adds validation Promises to the watched collection.
+         *
+         * @param promises Set of validation promise to observe
+         * @returns A reference to the current ValidationPromiseBuilder
+         */
+        add(promises: Array<Promise<any>>): ValidationPromiseBuilder;
+        /**
+         * Creates a Promise to be resolved or rejected once all watched validation Promises complete.
+         */
+        build(): Promise<any>;
+        private checkForCompletion_();
+        private markCompleted_(promise);
+    }
+}
+declare module formsjs {
+    class ValidationService {
+        protected strings_: Strings;
+        /**
+         * Constructor.
+         */
+        constructor(strings?: Strings);
+        /**
+         * Default validation failure messages.
+         */
+        strings: Strings;
+        /**
+         * Validates an individual attribute (specified by fieldName) according to the provided validation rules.
+         *
+         * @param fieldName Name of attribute in formData object
+         * @param formData Form data
+         * @param validationSchema See {@link ValidationSchema}
+         * @returns Promise that resolves/rejects based on validation outcome.
+         */
+        validateField(fieldName: string, formData: any, validationSchema: ValidationSchema): Promise<any>;
+    }
+}
+declare module formsjs {
+    /**
+     * Describes additional view
+     */
+    interface FieldView {
+        /**
+         * Attribute name within form data object (e.g. "username" within <code>{username: "John Doe"}</code>).
+         * This is a convenience attribute added by Forms JS based on the map key in {@link ViewSchema}.
+         * @private
+         */
+        key_: string;
+        /**
+         * Input type used by this field; defaults to InputType.TEXT.
+         */
+        inputType?: InputType;
+        /**
+         * Optional help text providing additional context to users.
+         */
+        help?: string;
+        /**
+         * Field <label>; defaults to humanized form of attribute name (e.g. "firstName" becomes "First Name").
+         */
+        label?: string;
+        /**
+         * Placeholder text shown when field is empty.
+         */
+        placeholder?: string;
+        /**
+         * This field should be read-only, not editable.
+         */
+        readOnly?: boolean;
+    }
+}
+declare module formsjs {
+    /**
+     * Describes the desired view layout for an auto-generated form.
+     * This schema is a map of field-name to view options.
+     */
+    interface ViewSchema {
+        [fieldName: string]: FieldView;
     }
 }
 declare module formsjs {
@@ -338,97 +486,6 @@ declare module formsjs {
 declare module formsjs {
     interface Validator {
         validate(value: any, formData: any, validatableAttribute: ValidatableAttribute): Array<Promise<string>>;
-    }
-}
-declare module formsjs {
-    class Flatten {
-        /**
-         * Return a (1-dimensional) array of keys representing an object.
-         *
-         * <p>For example, <code>{foo: {bar: 'baz'}}</code> will become flattened into <code>'['foo', 'foo.bar']</code>.
-         *
-         * <p>Arrays can also be flattened.
-         * Their flattened keys will take the form of 'myArray[0]' and 'myArray[0].myNestedProperty'.
-         */
-        static flatten(object: any): Array<string>;
-        /**
-         * Returns the property value of the flattened key or undefined if the property does not exist.
-         *
-         * <p>For example, the key 'foo.bar' would return "baz" for the object <code>{foo: {bar: "baz"}}</code>.
-         * The key 'foo[1].baz' would return 2 for the object <code>{foo: [{bar: 1}, {baz: 2}]}</code>.
-         */
-        static read(flattenedKey: string, object: any): any;
-        /**
-         * Writes a value to the location specified by a flattened key and creates nested structure along the way as needed.
-         *
-         * <p>For example, writing "baz" to the key 'foo.bar' would result in an object <code>{foo: {bar: "baz"}}</code>.
-         * Writing 3 to the key 'foo[0].bar' would result in an object <code>{foo: [{bar: 3}]}</code>.
-         */
-        static write(value: any, flattenedKey: string, object: any): void;
-        /**
-         * Helper method for initializing a missing property.
-         *
-         * @throws Error if unrecognized property specified
-         * @throws Error if property already exists of an incorrect type
-         */
-        private static createPropertyIfMissing_(key, object, propertyType);
-    }
-}
-declare module formsjs {
-    /**
-     * UID generator for formFor input fields.
-     * @see http://stackoverflow.com/questions/6248666/how-to-generate-short-uid-like-ax4j9z-in-js
-     */
-    class UID {
-        /**
-         * Create a new UID.
-         */
-        static create(): string;
-    }
-}
-declare module formsjs {
-    class ValidationPromiseBuilder {
-        private failureMessages_;
-        private promise_;
-        private promiseRejecter_;
-        private promiseResolver_;
-        private promises_;
-        constructor(promises?: Array<Promise<any>>);
-        /**
-         * Adds validation Promises to the watched collection.
-         *
-         * @param promises Set of validation promise to observe
-         * @returns A reference to the current ValidationPromiseBuilder
-         */
-        add(promises: Array<Promise<any>>): ValidationPromiseBuilder;
-        /**
-         * Creates a Promise to be resolved or rejected once all watched validation Promises complete.
-         */
-        build(): Promise<any>;
-        private checkForCompletion_();
-        private markCompleted_(promise);
-    }
-}
-declare module formsjs {
-    class ValidationService {
-        protected strings_: Strings;
-        /**
-         * Constructor.
-         */
-        constructor(strings?: Strings);
-        /**
-         * Default validation failure messages.
-         */
-        strings: Strings;
-        /**
-         * Validates an individual attribute (specified by fieldName) according to the provided validation rules.
-         *
-         * @param fieldName Name of attribute in formData object
-         * @param formData Form data
-         * @param validationSchema See {@link ValidationSchema}
-         * @returns Promise that resolves/rejects based on validation outcome.
-         */
-        validateField(fieldName: string, formData: any, validationSchema: ValidationSchema): Promise<any>;
     }
 }
 declare module formsjs {

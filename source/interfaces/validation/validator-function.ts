@@ -1,4 +1,4 @@
-/// <reference path="../../definitions/es6-promise.d.ts" />
+/// <reference path="../../../definitions/es6-promise.d.ts" />
 
 module formsjs {
 

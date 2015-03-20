@@ -216,6 +216,19 @@ var formsjs;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(Form.prototype, "viewSchema", {
+            /**
+             * Optional view schema for auto-created forms.
+             */
+            get: function () {
+                return this.viewSchema_;
+            },
+            set: function (value) {
+                this.viewSchema_ = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
         /**
          * Register a field with the form.
          *
@@ -308,188 +321,6 @@ var formsjs;
     })();
     formsjs.Form = Form;
 })(formsjs || (formsjs = {}));
-var formsjs;
-(function (formsjs) {
-    /**
-     * Provides a mechanism for overriding Forms JS strings (e.g. validation failure messages).
-     *
-     * <ul>
-     *   <li>The prototype of this class defines an initial set of strings (as static properties).
-     *       (These are the Forms JS default values.)
-     *   <li>Override the static properties to change defaults for all instances of Forms JS.
-     *   <li>Strings instances will copy their values from the prototype's static properties.
-     *       (This includes any global overrides you may have set.)
-     *   <li>Override properties on a Strings instance to customize messages for a specific form.
-     *   <li>Lastly, individual fields can provide overrides as always via the validation schame.
-     *       (See {@link ValidatableAttribute}.
-     * </ul>
-     */
-    var Strings = (function () {
-        function Strings() {
-            this.booleanTypeValidationFailed_ = Strings.booleanTypeValidationFailed;
-            this.customValidationFailed_ = Strings.customValidationFailed;
-            this.enumerationValidationFailed_ = Strings.enumerationValidationFailed;
-            this.floatTypeValidationFailed_ = Strings.floatTypeValidationFailed;
-            this.integerTypeValidationFailed_ = Strings.integerTypeValidationFailed;
-            this.maximumNumberValidationFailed_ = Strings.maximumNumberValidationFailed;
-            this.maxStringLengthValidationFailed_ = Strings.maxStringLengthValidationFailed;
-            this.minimumNumberValidationFailed_ = Strings.minimumNumberValidationFailed;
-            this.minStringLengthValidationFailed_ = Strings.minStringLengthValidationFailed;
-            this.patternValidationFailed_ = Strings.patternValidationFailed;
-            this.requiredValidationFailed_ = Strings.requiredValidationFailed;
-            this.stringTypeValidationFailed_ = Strings.stringTypeValidationFailed;
-        }
-        Object.defineProperty(Strings.prototype, "booleanTypeValidationFailed", {
-            get: function () {
-                return this.booleanTypeValidationFailed_;
-            },
-            set: function (value) {
-                this.booleanTypeValidationFailed_ = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Strings.prototype, "customValidationFailed", {
-            get: function () {
-                return this.customValidationFailed_;
-            },
-            set: function (value) {
-                this.customValidationFailed_ = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Strings.prototype, "enumerationValidationFailed", {
-            get: function () {
-                return this.enumerationValidationFailed_;
-            },
-            set: function (value) {
-                this.enumerationValidationFailed_ = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Strings.prototype, "floatTypeValidationFailed", {
-            get: function () {
-                return this.floatTypeValidationFailed_;
-            },
-            set: function (value) {
-                this.floatTypeValidationFailed_ = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Strings.prototype, "integerTypeValidationFailed", {
-            get: function () {
-                return this.integerTypeValidationFailed_;
-            },
-            set: function (value) {
-                this.integerTypeValidationFailed_ = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Strings.prototype, "maximumNumberValidationFailed", {
-            get: function () {
-                return this.maximumNumberValidationFailed_;
-            },
-            set: function (value) {
-                this.maximumNumberValidationFailed_ = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Strings.prototype, "maxStringLengthValidationFailed", {
-            get: function () {
-                return this.maxStringLengthValidationFailed_;
-            },
-            set: function (value) {
-                this.maxStringLengthValidationFailed_ = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Strings.prototype, "minimumNumberValidationFailed", {
-            get: function () {
-                return this.minimumNumberValidationFailed_;
-            },
-            set: function (value) {
-                this.minimumNumberValidationFailed_ = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Strings.prototype, "minStringLengthValidationFailed", {
-            get: function () {
-                return this.minStringLengthValidationFailed_;
-            },
-            set: function (value) {
-                this.minStringLengthValidationFailed_ = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Strings.prototype, "patternValidationFailed", {
-            get: function () {
-                return this.patternValidationFailed_;
-            },
-            set: function (value) {
-                this.patternValidationFailed_ = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Strings.prototype, "requiredValidationFailed", {
-            get: function () {
-                return this.requiredValidationFailed_;
-            },
-            set: function (value) {
-                this.requiredValidationFailed_ = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(Strings.prototype, "stringTypeValidationFailed", {
-            get: function () {
-                return this.stringTypeValidationFailed_;
-            },
-            set: function (value) {
-                this.stringTypeValidationFailed_ = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Strings.booleanTypeValidationFailed = '${value} must be a boolean.';
-        Strings.customValidationFailed = 'Value ${value} failed custom validation.';
-        Strings.enumerationValidationFailed = 'The value for ${value} is not in the list of allowed values';
-        Strings.floatTypeValidationFailed = '${value} must be a float.';
-        Strings.integerTypeValidationFailed = '${value} must be an integer.';
-        Strings.maximumNumberValidationFailed = 'Must be no more than ${max}.';
-        Strings.maxStringLengthValidationFailed = 'Must be no more than ${max} characters long.';
-        Strings.minimumNumberValidationFailed = 'Must be at least ${min}.';
-        Strings.minStringLengthValidationFailed = 'Must be at least ${min} characters long.';
-        Strings.patternValidationFailed = 'The value for ${value} does not match the required pattern';
-        Strings.requiredValidationFailed = 'This is a required field.';
-        Strings.stringTypeValidationFailed = '${value} must be a string.';
-        return Strings;
-    })();
-    formsjs.Strings = Strings;
-})(formsjs || (formsjs = {}));
-var formsjs;
-(function (formsjs) {
-    /**
-     * Supported type validations.
-     */
-    (function (ValidationType) {
-        ValidationType[ValidationType["BOOLEAN"] = "boolean"] = "BOOLEAN";
-        ValidationType[ValidationType["FLOAT"] = "float"] = "FLOAT";
-        ValidationType[ValidationType["INTEGER"] = "integer"] = "INTEGER";
-        ValidationType[ValidationType["STRING"] = "string"] = "STRING";
-    })(formsjs.ValidationType || (formsjs.ValidationType = {}));
-    var ValidationType = formsjs.ValidationType;
-})(formsjs || (formsjs = {}));
-/// <reference path="../../definitions/es6-promise.d.ts" />
-/// <reference path="../../definitions/es6-promise.d.ts" />
 /// <reference path="../../definitions/es6-promise.d.ts" />
 var formsjs;
 (function (formsjs) {
@@ -667,6 +498,198 @@ var formsjs;
     })();
     formsjs.UID = UID;
 })(formsjs || (formsjs = {}));
+var formsjs;
+(function (formsjs) {
+    /**
+     * Provides a mechanism for overriding Forms JS strings (e.g. validation failure messages).
+     *
+     * <ul>
+     *   <li>The prototype of this class defines an initial set of strings (as static properties).
+     *       (These are the Forms JS default values.)
+     *   <li>Override the static properties to change defaults for all instances of Forms JS.
+     *   <li>Strings instances will copy their values from the prototype's static properties.
+     *       (This includes any global overrides you may have set.)
+     *   <li>Override properties on a Strings instance to customize messages for a specific form.
+     *   <li>Lastly, individual fields can provide overrides as always via the validation schame.
+     *       (See {@link ValidatableAttribute}.
+     * </ul>
+     */
+    var Strings = (function () {
+        function Strings() {
+            this.booleanTypeValidationFailed_ = Strings.booleanTypeValidationFailed;
+            this.customValidationFailed_ = Strings.customValidationFailed;
+            this.enumerationValidationFailed_ = Strings.enumerationValidationFailed;
+            this.floatTypeValidationFailed_ = Strings.floatTypeValidationFailed;
+            this.integerTypeValidationFailed_ = Strings.integerTypeValidationFailed;
+            this.maximumNumberValidationFailed_ = Strings.maximumNumberValidationFailed;
+            this.maxStringLengthValidationFailed_ = Strings.maxStringLengthValidationFailed;
+            this.minimumNumberValidationFailed_ = Strings.minimumNumberValidationFailed;
+            this.minStringLengthValidationFailed_ = Strings.minStringLengthValidationFailed;
+            this.patternValidationFailed_ = Strings.patternValidationFailed;
+            this.requiredValidationFailed_ = Strings.requiredValidationFailed;
+            this.stringTypeValidationFailed_ = Strings.stringTypeValidationFailed;
+        }
+        Object.defineProperty(Strings.prototype, "booleanTypeValidationFailed", {
+            get: function () {
+                return this.booleanTypeValidationFailed_;
+            },
+            set: function (value) {
+                this.booleanTypeValidationFailed_ = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Strings.prototype, "customValidationFailed", {
+            get: function () {
+                return this.customValidationFailed_;
+            },
+            set: function (value) {
+                this.customValidationFailed_ = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Strings.prototype, "enumerationValidationFailed", {
+            get: function () {
+                return this.enumerationValidationFailed_;
+            },
+            set: function (value) {
+                this.enumerationValidationFailed_ = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Strings.prototype, "floatTypeValidationFailed", {
+            get: function () {
+                return this.floatTypeValidationFailed_;
+            },
+            set: function (value) {
+                this.floatTypeValidationFailed_ = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Strings.prototype, "integerTypeValidationFailed", {
+            get: function () {
+                return this.integerTypeValidationFailed_;
+            },
+            set: function (value) {
+                this.integerTypeValidationFailed_ = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Strings.prototype, "maximumNumberValidationFailed", {
+            get: function () {
+                return this.maximumNumberValidationFailed_;
+            },
+            set: function (value) {
+                this.maximumNumberValidationFailed_ = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Strings.prototype, "maxStringLengthValidationFailed", {
+            get: function () {
+                return this.maxStringLengthValidationFailed_;
+            },
+            set: function (value) {
+                this.maxStringLengthValidationFailed_ = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Strings.prototype, "minimumNumberValidationFailed", {
+            get: function () {
+                return this.minimumNumberValidationFailed_;
+            },
+            set: function (value) {
+                this.minimumNumberValidationFailed_ = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Strings.prototype, "minStringLengthValidationFailed", {
+            get: function () {
+                return this.minStringLengthValidationFailed_;
+            },
+            set: function (value) {
+                this.minStringLengthValidationFailed_ = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Strings.prototype, "patternValidationFailed", {
+            get: function () {
+                return this.patternValidationFailed_;
+            },
+            set: function (value) {
+                this.patternValidationFailed_ = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Strings.prototype, "requiredValidationFailed", {
+            get: function () {
+                return this.requiredValidationFailed_;
+            },
+            set: function (value) {
+                this.requiredValidationFailed_ = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Strings.prototype, "stringTypeValidationFailed", {
+            get: function () {
+                return this.stringTypeValidationFailed_;
+            },
+            set: function (value) {
+                this.stringTypeValidationFailed_ = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Strings.booleanTypeValidationFailed = '${value} must be a boolean.';
+        Strings.customValidationFailed = 'Value ${value} failed custom validation.';
+        Strings.enumerationValidationFailed = 'The value for ${value} is not in the list of allowed values';
+        Strings.floatTypeValidationFailed = '${value} must be a float.';
+        Strings.integerTypeValidationFailed = '${value} must be an integer.';
+        Strings.maximumNumberValidationFailed = 'Must be no more than ${max}.';
+        Strings.maxStringLengthValidationFailed = 'Must be no more than ${max} characters long.';
+        Strings.minimumNumberValidationFailed = 'Must be at least ${min}.';
+        Strings.minStringLengthValidationFailed = 'Must be at least ${min} characters long.';
+        Strings.patternValidationFailed = 'The value for ${value} does not match the required pattern';
+        Strings.requiredValidationFailed = 'This is a required field.';
+        Strings.stringTypeValidationFailed = '${value} must be a string.';
+        return Strings;
+    })();
+    formsjs.Strings = Strings;
+})(formsjs || (formsjs = {}));
+var formsjs;
+(function (formsjs) {
+    /**
+     * Input types available for auto-created forms; see {@link FieldView}.
+     */
+    (function (InputType) {
+        InputType[InputType["CHECKBOX"] = "checkbox"] = "CHECKBOX";
+        InputType[InputType["RADIO"] = "radio"] = "RADIO";
+        InputType[InputType["TEXT"] = "text"] = "TEXT";
+    })(formsjs.InputType || (formsjs.InputType = {}));
+    var InputType = formsjs.InputType;
+})(formsjs || (formsjs = {}));
+var formsjs;
+(function (formsjs) {
+    /**
+     * Supported type validations.
+     */
+    (function (ValidationType) {
+        ValidationType[ValidationType["BOOLEAN"] = "boolean"] = "BOOLEAN";
+        ValidationType[ValidationType["FLOAT"] = "float"] = "FLOAT";
+        ValidationType[ValidationType["INTEGER"] = "integer"] = "INTEGER";
+        ValidationType[ValidationType["STRING"] = "string"] = "STRING";
+    })(formsjs.ValidationType || (formsjs.ValidationType = {}));
+    var ValidationType = formsjs.ValidationType;
+})(formsjs || (formsjs = {}));
 /// <reference path="../../definitions/es6-promise.d.ts" />
 var formsjs;
 (function (formsjs) {
@@ -766,6 +789,8 @@ var formsjs;
     })();
     formsjs.ValidationService = ValidationService;
 })(formsjs || (formsjs = {}));
+/// <reference path="../../../definitions/es6-promise.d.ts" />
+/// <reference path="../../../definitions/es6-promise.d.ts" />
 /// <reference path="../../../definitions/es6-promise.d.ts" />
 var formsjs;
 (function (formsjs) {

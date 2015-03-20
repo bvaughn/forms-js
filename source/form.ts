@@ -15,6 +15,7 @@ module formsjs {
     private submitFunction_:(data:any) => Promise<any>;
     private validationSchema_:ValidationSchema;
     private validationService_:ValidationService;
+    private viewSchema_:ViewSchema;
 
     /**
      * Constructor.
@@ -74,6 +75,12 @@ module formsjs {
      * Returns a ValidationService configured for the current Form.
      */
     get validationService():ValidationService { return this.validationService_; }
+
+    /**
+     * Optional view schema for auto-created forms.
+     */
+    public get viewSchema():ViewSchema { return this.viewSchema_; }
+    public set viewSchema(value:ViewSchema) { this.viewSchema_ = value; }
 
     /**
      * Register a field with the form.
