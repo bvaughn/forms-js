@@ -321,183 +321,6 @@ var formsjs;
     })();
     formsjs.Form = Form;
 })(formsjs || (formsjs = {}));
-/// <reference path="../../definitions/es6-promise.d.ts" />
-var formsjs;
-(function (formsjs) {
-    var Flatten = (function () {
-        function Flatten() {
-        }
-        /**
-         * Return a (1-dimensional) array of keys representing an object.
-         *
-         * <p>For example, <code>{foo: {bar: 'baz'}}</code> will become flattened into <code>'['foo', 'foo.bar']</code>.
-         *
-         * <p>Arrays can also be flattened.
-         * Their flattened keys will take the form of 'myArray[0]' and 'myArray[0].myNestedProperty'.
-         */
-        Flatten.flatten = function (object) {
-            var keys = [];
-            var queue = [{
-                object: object,
-                prefix: null
-            }];
-            while (true) {
-                if (queue.length === 0) {
-                    break;
-                }
-                var data = queue.pop();
-                var prefix = data.prefix ? data.prefix + '.' : '';
-                if (typeof data.object === 'object') {
-                    for (var prop in data.object) {
-                        var path = prefix + prop;
-                        var value = data.object[prop];
-                        keys.push(path);
-                        queue.push({
-                            object: value,
-                            prefix: path
-                        });
-                    }
-                }
-            }
-            return keys;
-        };
-        /**
-         * Returns the property value of the flattened key or undefined if the property does not exist.
-         *
-         * <p>For example, the key 'foo.bar' would return "baz" for the object <code>{foo: {bar: "baz"}}</code>.
-         * The key 'foo[1].baz' would return 2 for the object <code>{foo: [{bar: 1}, {baz: 2}]}</code>.
-         */
-        Flatten.read = function (flattenedKey, object) {
-            var keys = flattenedKey.split(/[\.\[\]]/);
-            while (keys.length > 0) {
-                var key = keys.shift();
-                // Keys after array will be empty
-                if (!key) {
-                    continue;
-                }
-                // Convert array indices from strings ('0') to integers (0)
-                if (key.match(/^[0-9]+$/)) {
-                    key = parseInt(key);
-                }
-                // Short-circuit if the path being read doesn't exist
-                if (!object.hasOwnProperty(key)) {
-                    return undefined;
-                }
-                object = object[key];
-            }
-            return object;
-        };
-        /**
-         * Writes a value to the location specified by a flattened key and creates nested structure along the way as needed.
-         *
-         * <p>For example, writing "baz" to the key 'foo.bar' would result in an object <code>{foo: {bar: "baz"}}</code>.
-         * Writing 3 to the key 'foo[0].bar' would result in an object <code>{foo: [{bar: 3}]}</code>.
-         */
-        Flatten.write = function (value, flattenedKey, object) {
-            var currentKey;
-            var keyIndexStart = 0;
-            for (var charIndex = 0, length = flattenedKey.length; charIndex < length; charIndex++) {
-                var character = flattenedKey.charAt(charIndex);
-                switch (character) {
-                    case '[':
-                        currentKey = flattenedKey.substring(keyIndexStart, charIndex);
-                        this.createPropertyIfMissing_(currentKey, object, Array);
-                        break;
-                    case ']':
-                        currentKey = flattenedKey.substring(keyIndexStart, charIndex);
-                        currentKey = parseInt(currentKey); // Convert index from string to int
-                        // Special case where we're targeting this object in the array
-                        if (charIndex === length - 1) {
-                            object[currentKey] = value;
-                        }
-                        else {
-                            // If this is the first time we're accessing this Array key we may need to initialize it.
-                            if (!object[currentKey] && charIndex < length - 1) {
-                                switch (flattenedKey.charAt(charIndex + 1)) {
-                                    case '[':
-                                        object[currentKey] = [];
-                                        break;
-                                    case '.':
-                                        object[currentKey] = {};
-                                        break;
-                                }
-                            }
-                            object = object[currentKey];
-                        }
-                        break;
-                    case '.':
-                        currentKey = flattenedKey.substring(keyIndexStart, charIndex);
-                        // Don't do anything with empty keys that follow Array indices (e.g. anArray[0].aProp)
-                        if (currentKey) {
-                            this.createPropertyIfMissing_(currentKey, object, Object);
-                        }
-                        break;
-                    default:
-                        continue;
-                        break;
-                }
-                keyIndexStart = charIndex + 1;
-                if (currentKey) {
-                    object = object[currentKey];
-                }
-            }
-            if (keyIndexStart < flattenedKey.length) {
-                currentKey = flattenedKey.substring(keyIndexStart, flattenedKey.length);
-                object[currentKey] = value;
-            }
-        };
-        /**
-         * Helper method for initializing a missing property.
-         *
-         * @throws Error if unrecognized property specified
-         * @throws Error if property already exists of an incorrect type
-         */
-        Flatten.createPropertyIfMissing_ = function (key, object, propertyType) {
-            switch (propertyType) {
-                case Array:
-                    if (!object.hasOwnProperty(key)) {
-                        object[key] = [];
-                    }
-                    else if (!(object[key] instanceof Array)) {
-                        throw Error('Property already exists but is not an Array');
-                    }
-                    break;
-                case Object:
-                    if (!object.hasOwnProperty(key)) {
-                        object[key] = {};
-                    }
-                    else if (typeof object[key] !== 'object') {
-                        throw Error('Property already exists but is not an Object');
-                    }
-                    break;
-                default:
-                    throw Error('Unsupported property type');
-                    break;
-            }
-        };
-        return Flatten;
-    })();
-    formsjs.Flatten = Flatten;
-})(formsjs || (formsjs = {}));
-var formsjs;
-(function (formsjs) {
-    /**
-     * UID generator for formFor input fields.
-     * @see http://stackoverflow.com/questions/6248666/how-to-generate-short-uid-like-ax4j9z-in-js
-     */
-    var UID = (function () {
-        function UID() {
-        }
-        /**
-         * Create a new UID.
-         */
-        UID.create = function () {
-            return ("0000" + (Math.random() * Math.pow(36, 4) << 0).toString(36)).slice(-4);
-        };
-        return UID;
-    })();
-    formsjs.UID = UID;
-})(formsjs || (formsjs = {}));
 var formsjs;
 (function (formsjs) {
     /**
@@ -689,6 +512,216 @@ var formsjs;
         ValidationType[ValidationType["STRING"] = "string"] = "STRING";
     })(formsjs.ValidationType || (formsjs.ValidationType = {}));
     var ValidationType = formsjs.ValidationType;
+})(formsjs || (formsjs = {}));
+/// <reference path="../../definitions/es6-promise.d.ts" />
+var formsjs;
+(function (formsjs) {
+    var Flatten = (function () {
+        function Flatten() {
+        }
+        /**
+         * Return a (1-dimensional) array of keys representing an object.
+         *
+         * <p>For example, <code>{foo: {bar: 'baz'}}</code> will become flattened into <code>'['foo', 'foo.bar']</code>.
+         *
+         * <p>Arrays can also be flattened.
+         * Their flattened keys will take the form of 'myArray[0]' and 'myArray[0].myNestedProperty'.
+         */
+        Flatten.flatten = function (object) {
+            var keys = [];
+            var queue = [{
+                object: object,
+                prefix: null
+            }];
+            while (true) {
+                if (queue.length === 0) {
+                    break;
+                }
+                var data = queue.pop();
+                var prefix = data.prefix ? data.prefix + '.' : '';
+                if (typeof data.object === 'object') {
+                    for (var prop in data.object) {
+                        var path = prefix + prop;
+                        var value = data.object[prop];
+                        keys.push(path);
+                        queue.push({
+                            object: value,
+                            prefix: path
+                        });
+                    }
+                }
+            }
+            return keys;
+        };
+        /**
+         * Returns the property value of the flattened key or undefined if the property does not exist.
+         *
+         * <p>For example, the key 'foo.bar' would return "baz" for the object <code>{foo: {bar: "baz"}}</code>.
+         * The key 'foo[1].baz' would return 2 for the object <code>{foo: [{bar: 1}, {baz: 2}]}</code>.
+         */
+        Flatten.read = function (flattenedKey, object) {
+            var keys = flattenedKey.split(/[\.\[\]]/);
+            while (keys.length > 0) {
+                var key = keys.shift();
+                // Keys after array will be empty
+                if (!key) {
+                    continue;
+                }
+                // Convert array indices from strings ('0') to integers (0)
+                if (key.match(/^[0-9]+$/)) {
+                    key = parseInt(key);
+                }
+                // Short-circuit if the path being read doesn't exist
+                if (!object.hasOwnProperty(key)) {
+                    return undefined;
+                }
+                object = object[key];
+            }
+            return object;
+        };
+        /**
+         * Writes a value to the location specified by a flattened key and creates nested structure along the way as needed.
+         *
+         * <p>For example, writing "baz" to the key 'foo.bar' would result in an object <code>{foo: {bar: "baz"}}</code>.
+         * Writing 3 to the key 'foo[0].bar' would result in an object <code>{foo: [{bar: 3}]}</code>.
+         */
+        Flatten.write = function (value, flattenedKey, object) {
+            var currentKey;
+            var keyIndexStart = 0;
+            for (var charIndex = 0, length = flattenedKey.length; charIndex < length; charIndex++) {
+                var character = flattenedKey.charAt(charIndex);
+                switch (character) {
+                    case '[':
+                        currentKey = flattenedKey.substring(keyIndexStart, charIndex);
+                        this.createPropertyIfMissing_(currentKey, object, Array);
+                        break;
+                    case ']':
+                        currentKey = flattenedKey.substring(keyIndexStart, charIndex);
+                        currentKey = parseInt(currentKey); // Convert index from string to int
+                        // Special case where we're targeting this object in the array
+                        if (charIndex === length - 1) {
+                            object[currentKey] = value;
+                        }
+                        else {
+                            // If this is the first time we're accessing this Array key we may need to initialize it.
+                            if (!object[currentKey] && charIndex < length - 1) {
+                                switch (flattenedKey.charAt(charIndex + 1)) {
+                                    case '[':
+                                        object[currentKey] = [];
+                                        break;
+                                    case '.':
+                                        object[currentKey] = {};
+                                        break;
+                                }
+                            }
+                            object = object[currentKey];
+                        }
+                        break;
+                    case '.':
+                        currentKey = flattenedKey.substring(keyIndexStart, charIndex);
+                        // Don't do anything with empty keys that follow Array indices (e.g. anArray[0].aProp)
+                        if (currentKey) {
+                            this.createPropertyIfMissing_(currentKey, object, Object);
+                        }
+                        break;
+                    default:
+                        continue;
+                        break;
+                }
+                keyIndexStart = charIndex + 1;
+                if (currentKey) {
+                    object = object[currentKey];
+                }
+            }
+            if (keyIndexStart < flattenedKey.length) {
+                currentKey = flattenedKey.substring(keyIndexStart, flattenedKey.length);
+                object[currentKey] = value;
+            }
+        };
+        /**
+         * Helper method for initializing a missing property.
+         *
+         * @throws Error if unrecognized property specified
+         * @throws Error if property already exists of an incorrect type
+         */
+        Flatten.createPropertyIfMissing_ = function (key, object, propertyType) {
+            switch (propertyType) {
+                case Array:
+                    if (!object.hasOwnProperty(key)) {
+                        object[key] = [];
+                    }
+                    else if (!(object[key] instanceof Array)) {
+                        throw Error('Property already exists but is not an Array');
+                    }
+                    break;
+                case Object:
+                    if (!object.hasOwnProperty(key)) {
+                        object[key] = {};
+                    }
+                    else if (typeof object[key] !== 'object') {
+                        throw Error('Property already exists but is not an Object');
+                    }
+                    break;
+                default:
+                    throw Error('Unsupported property type');
+                    break;
+            }
+        };
+        return Flatten;
+    })();
+    formsjs.Flatten = Flatten;
+})(formsjs || (formsjs = {}));
+var formsjs;
+(function (formsjs) {
+    /**
+     * Strings utility.
+     */
+    var Humanizer = (function () {
+        function Humanizer() {
+        }
+        /**
+         * Converts text from snake or camel case (e.g. myVariable, my_variable) to a "humanized" case (e.g. My Variable).
+         *
+         * @param text Snake-case or camel-case string
+         * @returns Humanized string (ex. 'My Variable')
+         */
+        Humanizer.humanize = function (text) {
+            if (!text) {
+                return '';
+            }
+            text = text.replace(/[A-Z]/g, function (match) {
+                return ' ' + match;
+            });
+            text = text.replace(/_([a-z])/g, function (match, $1) {
+                return ' ' + $1.toUpperCase();
+            });
+            text = text.replace(/\s+/g, ' ');
+            text = text.trim();
+            text = text.charAt(0).toUpperCase() + text.slice(1);
+            return text;
+        };
+        return Humanizer;
+    })();
+    formsjs.Humanizer = Humanizer;
+})(formsjs || (formsjs = {}));
+var formsjs;
+(function (formsjs) {
+    /**
+     * UID generator for formFor input fields.
+     * @see http://stackoverflow.com/questions/6248666/how-to-generate-short-uid-like-ax4j9z-in-js
+     */
+    var UID = (function () {
+        function UID() {
+        }
+        /**
+         * Create a new UID.
+         */
+        UID.create = function () {
+            return ("0000" + (Math.random() * Math.pow(36, 4) << 0).toString(36)).slice(-4);
+        };
+        return UID;
+    })();
+    formsjs.UID = UID;
 })(formsjs || (formsjs = {}));
 /// <reference path="../../definitions/es6-promise.d.ts" />
 var formsjs;
