@@ -139,6 +139,27 @@ declare module formsjs {
 }
 declare module formsjs {
     /**
+     * Input types available for auto-created forms; see {@link FieldView}.
+     */
+    enum InputType {
+        CHECKBOX,
+        RADIO,
+        TEXT,
+    }
+}
+declare module formsjs {
+    /**
+     * Supported type validations.
+     */
+    enum ValidationType {
+        BOOLEAN,
+        FLOAT,
+        INTEGER,
+        STRING,
+    }
+}
+declare module formsjs {
+    /**
      * Provides a mechanism for overriding Forms JS strings (e.g. validation failure messages).
      *
      * <ul>
@@ -190,27 +211,6 @@ declare module formsjs {
         patternValidationFailed: string;
         requiredValidationFailed: string;
         stringTypeValidationFailed: string;
-    }
-}
-declare module formsjs {
-    /**
-     * Input types available for auto-created forms; see {@link FieldView}.
-     */
-    enum InputType {
-        CHECKBOX,
-        RADIO,
-        TEXT,
-    }
-}
-declare module formsjs {
-    /**
-     * Supported type validations.
-     */
-    enum ValidationType {
-        BOOLEAN,
-        FLOAT,
-        INTEGER,
-        STRING,
     }
 }
 declare module formsjs {

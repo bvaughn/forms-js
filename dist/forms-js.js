@@ -324,6 +324,31 @@ var formsjs;
 var formsjs;
 (function (formsjs) {
     /**
+     * Input types available for auto-created forms; see {@link FieldView}.
+     */
+    (function (InputType) {
+        InputType[InputType["CHECKBOX"] = "checkbox"] = "CHECKBOX";
+        InputType[InputType["RADIO"] = "radio"] = "RADIO";
+        InputType[InputType["TEXT"] = "text"] = "TEXT";
+    })(formsjs.InputType || (formsjs.InputType = {}));
+    var InputType = formsjs.InputType;
+})(formsjs || (formsjs = {}));
+var formsjs;
+(function (formsjs) {
+    /**
+     * Supported type validations.
+     */
+    (function (ValidationType) {
+        ValidationType[ValidationType["BOOLEAN"] = "boolean"] = "BOOLEAN";
+        ValidationType[ValidationType["FLOAT"] = "float"] = "FLOAT";
+        ValidationType[ValidationType["INTEGER"] = "integer"] = "INTEGER";
+        ValidationType[ValidationType["STRING"] = "string"] = "STRING";
+    })(formsjs.ValidationType || (formsjs.ValidationType = {}));
+    var ValidationType = formsjs.ValidationType;
+})(formsjs || (formsjs = {}));
+var formsjs;
+(function (formsjs) {
+    /**
      * Provides a mechanism for overriding Forms JS strings (e.g. validation failure messages).
      *
      * <ul>
@@ -487,31 +512,6 @@ var formsjs;
         return Strings;
     })();
     formsjs.Strings = Strings;
-})(formsjs || (formsjs = {}));
-var formsjs;
-(function (formsjs) {
-    /**
-     * Input types available for auto-created forms; see {@link FieldView}.
-     */
-    (function (InputType) {
-        InputType[InputType["CHECKBOX"] = "checkbox"] = "CHECKBOX";
-        InputType[InputType["RADIO"] = "radio"] = "RADIO";
-        InputType[InputType["TEXT"] = "text"] = "TEXT";
-    })(formsjs.InputType || (formsjs.InputType = {}));
-    var InputType = formsjs.InputType;
-})(formsjs || (formsjs = {}));
-var formsjs;
-(function (formsjs) {
-    /**
-     * Supported type validations.
-     */
-    (function (ValidationType) {
-        ValidationType[ValidationType["BOOLEAN"] = "boolean"] = "BOOLEAN";
-        ValidationType[ValidationType["FLOAT"] = "float"] = "FLOAT";
-        ValidationType[ValidationType["INTEGER"] = "integer"] = "INTEGER";
-        ValidationType[ValidationType["STRING"] = "string"] = "STRING";
-    })(formsjs.ValidationType || (formsjs.ValidationType = {}));
-    var ValidationType = formsjs.ValidationType;
 })(formsjs || (formsjs = {}));
 /// <reference path="../../definitions/es6-promise.d.ts" />
 var formsjs;
