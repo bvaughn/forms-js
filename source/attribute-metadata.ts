@@ -47,6 +47,11 @@ module formsjs {
     public get errorMessages():Array<string> { return this.errorMessages_; }
 
     /**
+     * Reference to the parent Form object.
+     */
+    public get form():Form { return this.form_; }
+
+    /**
      * Pristine fields should not display validation error messages.
      * Once a user has modified the value, the field should no longer be marked as pristine.
      * On form-submit, fields may also be marked as non-pristine.
