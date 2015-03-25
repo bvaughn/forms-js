@@ -197,48 +197,24 @@ declare module formsjs {
     }
 }
 declare module formsjs {
-    class ValidationPromiseBuilder {
-        private failureMessages_;
-        private promise_;
-        private promiseRejecter_;
-        private promiseResolver_;
-        private promises_;
-        constructor(promises?: Array<Promise<any>>);
-        /**
-         * Adds validation Promises to the watched collection.
-         *
-         * @param promises Set of validation promise to observe
-         * @returns A reference to the current ValidationPromiseBuilder
-         */
-        add(promises: Array<Promise<any>>): ValidationPromiseBuilder;
-        /**
-         * Creates a Promise to be resolved or rejected once all watched validation Promises complete.
-         */
-        build(): Promise<any>;
-        private checkForCompletion_();
-        private markCompleted_(promise);
+    /**
+     * Input types available for auto-created forms; see {@link FieldView}.
+     */
+    enum InputType {
+        CHECKBOX,
+        RADIO,
+        TEXT,
     }
 }
 declare module formsjs {
-    class ValidationService {
-        protected strings_: Strings;
-        /**
-         * Constructor.
-         */
-        constructor(strings?: Strings);
-        /**
-         * Default validation failure messages.
-         */
-        strings: Strings;
-        /**
-         * Validates an individual attribute (specified by fieldName) according to the provided validation rules.
-         *
-         * @param fieldName Name of attribute in formData object
-         * @param formData Form data
-         * @param validationSchema See {@link ValidationSchema}
-         * @returns Promise that resolves/rejects based on validation outcome.
-         */
-        validateField(fieldName: string, formData: any, validationSchema: ValidationSchema): Promise<any>;
+    /**
+     * Supported type validations.
+     */
+    enum ValidationType {
+        BOOLEAN,
+        FLOAT,
+        INTEGER,
+        STRING,
     }
 }
 declare module formsjs {
@@ -302,86 +278,48 @@ declare module formsjs {
     }
 }
 declare module formsjs {
-    /**
-     * Input types available for auto-created forms; see {@link FieldView}.
-     */
-    enum InputType {
-        CHECKBOX,
-        RADIO,
-        TEXT,
+    class ValidationPromiseBuilder {
+        private failureMessages_;
+        private promise_;
+        private promiseRejecter_;
+        private promiseResolver_;
+        private promises_;
+        constructor(promises?: Array<Promise<any>>);
+        /**
+         * Adds validation Promises to the watched collection.
+         *
+         * @param promises Set of validation promise to observe
+         * @returns A reference to the current ValidationPromiseBuilder
+         */
+        add(promises: Array<Promise<any>>): ValidationPromiseBuilder;
+        /**
+         * Creates a Promise to be resolved or rejected once all watched validation Promises complete.
+         */
+        build(): Promise<any>;
+        private checkForCompletion_();
+        private markCompleted_(promise);
     }
 }
 declare module formsjs {
-    /**
-     * Supported type validations.
-     */
-    enum ValidationType {
-        BOOLEAN,
-        FLOAT,
-        INTEGER,
-        STRING,
-    }
-}
-declare module formsjs {
-    class AbstractValidator implements Validator {
+    class ValidationService {
         protected strings_: Strings;
+        /**
+         * Constructor.
+         */
         constructor(strings?: Strings);
+        /**
+         * Default validation failure messages.
+         */
         strings: Strings;
-        validate(value: any, formData: any, validatableAttribute: ValidatableAttribute): Array<Promise<string>>;
-    }
-}
-declare module formsjs {
-    class CustomValidator extends AbstractValidator {
         /**
-         * @inheritDoc
-         * @override
+         * Validates an individual attribute (specified by fieldName) according to the provided validation rules.
+         *
+         * @param fieldName Name of attribute in formData object
+         * @param formData Form data
+         * @param validationSchema See {@link ValidationSchema}
+         * @returns Promise that resolves/rejects based on validation outcome.
          */
-        validate(value: any, formData: any, validatableAttribute: ValidatableAttribute): Array<Promise<string>>;
-    }
-}
-declare module formsjs {
-    class EnumValidator extends AbstractValidator {
-        /**
-         * @inheritDoc
-         * @override
-         */
-        validate(value: any, formData: any, validatableAttribute: ValidatableAttribute): Array<Promise<string>>;
-    }
-}
-declare module formsjs {
-    class MinMaxValidator extends AbstractValidator {
-        /**
-         * @inheritDoc
-         * @override
-         */
-        validate(value: any, formData: any, validatableAttribute: ValidatableAttribute): Array<Promise<string>>;
-    }
-}
-declare module formsjs {
-    class PatternValidator extends AbstractValidator {
-        /**
-         * @inheritDoc
-         * @override
-         */
-        validate(value: any, formData: any, validatableAttribute: ValidatableAttribute): Array<Promise<string>>;
-    }
-}
-declare module formsjs {
-    class RequiredValidator extends AbstractValidator {
-        /**
-         * @inheritDoc
-         * @override
-         */
-        validate(value: any, formData: any, validatableAttribute: ValidatableAttribute): Array<Promise<string>>;
-    }
-}
-declare module formsjs {
-    class TypeValidator extends AbstractValidator {
-        /**
-         * @inheritDoc
-         * @override
-         */
-        validate(value: any, formData: any, validatableAttribute: ValidatableAttribute): Array<Promise<string>>;
+        validateField(fieldName: string, formData: any, validationSchema: ValidationSchema): Promise<any>;
     }
 }
 declare module formsjs {
@@ -565,6 +503,68 @@ declare module formsjs {
 }
 declare module formsjs {
     interface Validator {
+        validate(value: any, formData: any, validatableAttribute: ValidatableAttribute): Array<Promise<string>>;
+    }
+}
+declare module formsjs {
+    class AbstractValidator implements Validator {
+        protected strings_: Strings;
+        constructor(strings?: Strings);
+        strings: Strings;
+        validate(value: any, formData: any, validatableAttribute: ValidatableAttribute): Array<Promise<string>>;
+    }
+}
+declare module formsjs {
+    class CustomValidator extends AbstractValidator {
+        /**
+         * @inheritDoc
+         * @override
+         */
+        validate(value: any, formData: any, validatableAttribute: ValidatableAttribute): Array<Promise<string>>;
+    }
+}
+declare module formsjs {
+    class EnumValidator extends AbstractValidator {
+        /**
+         * @inheritDoc
+         * @override
+         */
+        validate(value: any, formData: any, validatableAttribute: ValidatableAttribute): Array<Promise<string>>;
+    }
+}
+declare module formsjs {
+    class MinMaxValidator extends AbstractValidator {
+        /**
+         * @inheritDoc
+         * @override
+         */
+        validate(value: any, formData: any, validatableAttribute: ValidatableAttribute): Array<Promise<string>>;
+    }
+}
+declare module formsjs {
+    class PatternValidator extends AbstractValidator {
+        /**
+         * @inheritDoc
+         * @override
+         */
+        validate(value: any, formData: any, validatableAttribute: ValidatableAttribute): Array<Promise<string>>;
+    }
+}
+declare module formsjs {
+    class RequiredValidator extends AbstractValidator {
+        /**
+         * @inheritDoc
+         * @override
+         */
+        validate(value: any, formData: any, validatableAttribute: ValidatableAttribute): Array<Promise<string>>;
+    }
+}
+declare module formsjs {
+    class TypeValidator extends AbstractValidator {
+        /**
+         * @inheritDoc
+         * @override
+         */
         validate(value: any, formData: any, validatableAttribute: ValidatableAttribute): Array<Promise<string>>;
     }
 }
