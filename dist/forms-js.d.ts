@@ -218,6 +218,51 @@ declare module formsjs {
     }
 }
 declare module formsjs {
+    class ValidationPromiseBuilder {
+        private failureMessages_;
+        private promise_;
+        private promiseRejecter_;
+        private promiseResolver_;
+        private promises_;
+        constructor(promises?: Array<Promise<any>>);
+        /**
+         * Adds validation Promises to the watched collection.
+         *
+         * @param promises Set of validation promise to observe
+         * @returns A reference to the current ValidationPromiseBuilder
+         */
+        add(promises: Array<Promise<any>>): ValidationPromiseBuilder;
+        /**
+         * Creates a Promise to be resolved or rejected once all watched validation Promises complete.
+         */
+        build(): Promise<any>;
+        private checkForCompletion_();
+        private markCompleted_(promise);
+    }
+}
+declare module formsjs {
+    class ValidationService {
+        protected strings_: Strings;
+        /**
+         * Constructor.
+         */
+        constructor(strings?: Strings);
+        /**
+         * Default validation failure messages.
+         */
+        strings: Strings;
+        /**
+         * Validates an individual attribute (specified by fieldName) according to the provided validation rules.
+         *
+         * @param fieldName Name of attribute in formData object
+         * @param formData Form data
+         * @param validationSchema See {@link ValidationSchema}
+         * @returns Promise that resolves/rejects based on validation outcome.
+         */
+        validateField(fieldName: string, formData: any, validationSchema: ValidationSchema): Promise<any>;
+    }
+}
+declare module formsjs {
     class Flatten {
         /**
          * Return a (1-dimensional) array of keys representing an object.
@@ -275,51 +320,6 @@ declare module formsjs {
          * Create a new UID.
          */
         static create(): string;
-    }
-}
-declare module formsjs {
-    class ValidationPromiseBuilder {
-        private failureMessages_;
-        private promise_;
-        private promiseRejecter_;
-        private promiseResolver_;
-        private promises_;
-        constructor(promises?: Array<Promise<any>>);
-        /**
-         * Adds validation Promises to the watched collection.
-         *
-         * @param promises Set of validation promise to observe
-         * @returns A reference to the current ValidationPromiseBuilder
-         */
-        add(promises: Array<Promise<any>>): ValidationPromiseBuilder;
-        /**
-         * Creates a Promise to be resolved or rejected once all watched validation Promises complete.
-         */
-        build(): Promise<any>;
-        private checkForCompletion_();
-        private markCompleted_(promise);
-    }
-}
-declare module formsjs {
-    class ValidationService {
-        protected strings_: Strings;
-        /**
-         * Constructor.
-         */
-        constructor(strings?: Strings);
-        /**
-         * Default validation failure messages.
-         */
-        strings: Strings;
-        /**
-         * Validates an individual attribute (specified by fieldName) according to the provided validation rules.
-         *
-         * @param fieldName Name of attribute in formData object
-         * @param formData Form data
-         * @param validationSchema See {@link ValidationSchema}
-         * @returns Promise that resolves/rejects based on validation outcome.
-         */
-        validateField(fieldName: string, formData: any, validationSchema: ValidationSchema): Promise<any>;
     }
 }
 declare module formsjs {

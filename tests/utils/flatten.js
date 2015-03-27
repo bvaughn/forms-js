@@ -35,6 +35,23 @@ describe('NestedObjectHelper:', function() {
       expect(keys).toContain('deep.bar');
       expect(keys).toContain('deep.deeper.baz');
     });
+
+    it('should iterate over items in an array', function() {
+      var keys = flatten.flatten({
+        foo: [
+          'string',
+          {
+            bar: true,
+            baz: 'yes'
+          }
+        ]
+      });
+
+      expect(keys).toContain('foo[0]');
+      expect(keys).toContain('foo[1]');
+      expect(keys).toContain('foo[1].bar');
+      expect(keys).toContain('foo[1].baz');
+    });
   });
 
   describe('read:', function() {

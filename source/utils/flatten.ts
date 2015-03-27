@@ -26,11 +26,13 @@ module formsjs {
         }
 
         var data:any = queue.pop();
-        var prefix:string = data.prefix ? data.prefix + '.' : '';
+        var objectIsArray = Array.isArray(data.object);
+        var prefix:string = data.prefix ? data.prefix + ( objectIsArray ? '[' : '.' ) : '';
+        var suffix:string = objectIsArray ? ']' : '';
 
         if (typeof data.object === 'object') {
           for (var prop in data.object) {
-            var path:string = prefix + prop;
+            var path:string = prefix + prop + suffix;
             var value:any = data.object[prop];
 
             keys.push(path);
