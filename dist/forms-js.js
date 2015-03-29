@@ -557,7 +557,7 @@ var formsjs;
      * Supported type validations.
      */
     (function (ValidationType) {
-        ValidationType[ValidationType["ARRAY"] = Array] = "ARRAY";
+        ValidationType[ValidationType["ARRAY"] = "array"] = "ARRAY";
         ValidationType[ValidationType["BOOLEAN"] = "boolean"] = "BOOLEAN";
         ValidationType[ValidationType["FLOAT"] = "float"] = "FLOAT";
         ValidationType[ValidationType["INTEGER"] = "integer"] = "INTEGER";
