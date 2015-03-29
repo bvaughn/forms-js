@@ -228,6 +228,35 @@ declare module formsjs {
     }
 }
 declare module formsjs {
+    /**
+     *
+     */
+    class ViewSchemaParser {
+        /**
+         * Parses the incoming view schema and returns an ordered collection of field-views.
+         *
+         * <p>For example the following nested object {@link ViewSchema}:
+         *
+         * <p><code>{
+         *   name: {inputType: "text", label: "Your name"},
+         *   address: {
+         *     street: {inputType: "text", label: "Address"},
+         *     city: {inputType: "text", label: "City"}
+         *   }
+         * }</code>
+         *
+         * <p>Would be converted and returned as follows set of {@link FieldView}:
+         *
+         * <p><code>[
+         *   {fieldName: "name", inputType: "text", label: "Your name"},
+         *   {fieldName: "address.street", inputType: "text", label: "Address"},
+         *   {fieldName: "address.city", inputType: "text", label: "City"}
+         * ]</code>
+         */
+        static normalize(viewSchema: ViewSchema | Array<FieldView>): Array<FieldView>;
+    }
+}
+declare module formsjs {
     class Flatten {
         /**
          * Return a (1-dimensional) array of keys representing an object.
@@ -341,6 +370,10 @@ declare module formsjs {
          * Input type used by this field; defaults to InputType.TEXT.
          */
         inputType?: InputType;
+        /**
+         * Identifies the field this view schema describes (e.g. "address.city").
+         */
+        fieldName?: string;
         /**
          * Optional help text providing additional context to users.
          */

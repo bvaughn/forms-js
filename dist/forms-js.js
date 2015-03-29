@@ -565,6 +565,57 @@ var formsjs;
     })(formsjs.ValidationType || (formsjs.ValidationType = {}));
     var ValidationType = formsjs.ValidationType;
 })(formsjs || (formsjs = {}));
+var formsjs;
+(function (formsjs) {
+    /**
+     *
+     */
+    var ViewSchemaParser = (function () {
+        function ViewSchemaParser() {
+        }
+        /**
+         * Parses the incoming view schema and returns an ordered collection of field-views.
+         *
+         * <p>For example the following nested object {@link ViewSchema}:
+         *
+         * <p><code>{
+         *   name: {inputType: "text", label: "Your name"},
+         *   address: {
+         *     street: {inputType: "text", label: "Address"},
+         *     city: {inputType: "text", label: "City"}
+         *   }
+         * }</code>
+         *
+         * <p>Would be converted and returned as follows set of {@link FieldView}:
+         *
+         * <p><code>[
+         *   {fieldName: "name", inputType: "text", label: "Your name"},
+         *   {fieldName: "address.street", inputType: "text", label: "Address"},
+         *   {fieldName: "address.city", inputType: "text", label: "City"}
+         * ]</code>
+         */
+        ViewSchemaParser.normalize = function (viewSchema) {
+            var fieldViews = [];
+            if (Array.isArray(viewSchema)) {
+                fieldViews = viewSchema;
+            }
+            else if (typeof viewSchema === 'object') {
+                var fieldNames = formsjs.Flatten.flatten(viewSchema);
+                for (var index = 0, length = fieldNames.length; index < length; index++) {
+                    var fieldName = fieldNames[index];
+                    var fieldView = formsjs.Flatten.read(fieldName, viewSchema);
+                    if (fieldView && fieldView.hasOwnProperty('inputType')) {
+                        fieldView.fieldName = fieldName;
+                        fieldViews.push(fieldView);
+                    }
+                }
+            }
+            return fieldViews;
+        };
+        return ViewSchemaParser;
+    })();
+    formsjs.ViewSchemaParser = ViewSchemaParser;
+})(formsjs || (formsjs = {}));
 /// <reference path="../../definitions/es6-promise.d.ts" />
 var formsjs;
 (function (formsjs) {
@@ -581,30 +632,22 @@ var formsjs;
          */
         Flatten.flatten = function (object) {
             var keys = [];
-            var queue = [{
-                object: object,
-                prefix: null
-            }];
-            while (true) {
-                if (queue.length === 0) {
-                    break;
-                }
-                var data = queue.pop();
-                var objectIsArray = Array.isArray(data.object);
-                var prefix = data.prefix ? data.prefix + (objectIsArray ? '[' : '.') : '';
+            var innerFlatten = function (data, prefix) {
+                var objectIsArray = Array.isArray(data);
+                var prefix = prefix ? prefix + (objectIsArray ? '[' : '.') : '';
                 var suffix = objectIsArray ? ']' : '';
-                if (typeof data.object === 'object') {
-                    for (var prop in data.object) {
+                if (data) {
+                    for (var prop in data) {
                         var path = prefix + prop + suffix;
-                        var value = data.object[prop];
+                        var value = data[prop];
+                        if (typeof value === 'object') {
+                            innerFlatten(value, path);
+                        }
                         keys.push(path);
-                        queue.push({
-                            object: value,
-                            prefix: path
-                        });
                     }
                 }
-            }
+            };
+            innerFlatten(object, '');
             return keys;
         };
         /**

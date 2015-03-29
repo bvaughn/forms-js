@@ -11,6 +11,11 @@ module formsjs {
     inputType?:InputType;
 
     /**
+     * Identifies the field this view schema describes (e.g. "address.city").
+     */
+    fieldName?:string;
+
+    /**
      * Optional help text providing additional context to users.
      */
     help?:string;

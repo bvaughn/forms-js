@@ -15,35 +15,26 @@ module formsjs {
     public static flatten(object:any):Array<string> {
       var keys:Array<string> = [];
 
-      var queue:Array<any> = [{
-        object: object,
-        prefix: null
-      }];
-
-      while (true) {
-        if (queue.length === 0) {
-          break;
-        }
-
-        var data:any = queue.pop();
-        var objectIsArray = Array.isArray(data.object);
-        var prefix:string = data.prefix ? data.prefix + ( objectIsArray ? '[' : '.' ) : '';
+      var innerFlatten = (data:any, prefix:string) => {
+        var objectIsArray = Array.isArray(data);
+        var prefix:string = prefix ? prefix + ( objectIsArray ? '[' : '.' ) : '';
         var suffix:string = objectIsArray ? ']' : '';
 
-        if (typeof data.object === 'object') {
-          for (var prop in data.object) {
+        if (data) {
+          for (var prop in data) {
             var path:string = prefix + prop + suffix;
-            var value:any = data.object[prop];
+            var value:any = data[prop];
+
+            if (typeof value === 'object') {
+              innerFlatten(value, path);
+            }
 
             keys.push(path);
-
-            queue.push({
-              object: value,
-              prefix: path
-            });
           }
         }
-      }
+      };
+
+      innerFlatten(object, '');
 
       return keys;
     }

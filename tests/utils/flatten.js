@@ -1,4 +1,4 @@
-describe('NestedObjectHelper:', function() {
+describe('Flatten:', function() {
   'use strict';
 
   var flatten;
@@ -28,12 +28,16 @@ describe('NestedObjectHelper:', function() {
           deeper: {
             baz: true
           }
-        }
+        },
+        whatComesAfterBaz: 'nothing'
       });
 
       expect(keys).toContain('foo');
+      expect(keys).toContain('deep');
       expect(keys).toContain('deep.bar');
+      expect(keys).toContain('deep.deeper');
       expect(keys).toContain('deep.deeper.baz');
+      expect(keys).toContain('whatComesAfterBaz');
     });
 
     it('should iterate over items in an array', function() {
