@@ -35,17 +35,24 @@ module formsjs {
       var value:any = Flatten.read(fieldName, formData);
       var validatableAttribute:ValidatableAttribute = Flatten.read(fieldName, validationSchema);
 
-      var promise:Promise<any> =
-        new ValidationPromiseBuilder()
-          .add(new RequiredValidator(this.strings).validate(value, formData, validatableAttribute))
-          .add(new TypeValidator(this.strings).validate(value, formData, validatableAttribute))
-          .add(new MinMaxValidator(this.strings).validate(value, formData, validatableAttribute))
-          .add(new EnumValidator(this.strings).validate(value, formData, validatableAttribute))
-          .add(new PatternValidator(this.strings).validate(value, formData, validatableAttribute))
-          .add(new CustomValidator(this.strings).validate(value, formData, validatableAttribute))
-          .build();
+      var promise:Promise<any>;
+
+      if (!validatableAttribute) {
+        promise = Promise.resolve();
+      } else {
+        promise =
+          new ValidationPromiseBuilder()
+            .add(new RequiredValidator(this.strings).validate(value, formData, validatableAttribute))
+            .add(new TypeValidator(this.strings).validate(value, formData, validatableAttribute))
+            .add(new MinMaxValidator(this.strings).validate(value, formData, validatableAttribute))
+            .add(new EnumValidator(this.strings).validate(value, formData, validatableAttribute))
+            .add(new PatternValidator(this.strings).validate(value, formData, validatableAttribute))
+            .add(new CustomValidator(this.strings).validate(value, formData, validatableAttribute))
+            .build();
+      }
 
       return promise;
+
     }
   }
 }

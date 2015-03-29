@@ -6,13 +6,6 @@ module formsjs {
   export interface ValidatableAttribute {
 
     /**
-     * Attribute name within form data object (e.g. "username" within <code>{username: "John Doe"}</code>).
-     * This is a convenience attribute added by Forms JS based on the map key in {@link ValidationSchema}.
-     * @private
-     */
-    key_:string;
-
-    /**
      * Optional set of acceptable values; any attributes values not within this set will be considered invalid.
      *
      * <p>Enum validations will fail with a default error message unless overridden with "enumFailureMessage".

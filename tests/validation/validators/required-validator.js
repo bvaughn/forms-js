@@ -47,4 +47,14 @@ describe('RequiredValidator:', function() {
     expect(promises.length).toBe(1);
     expect(promises[0]).toBeRejectedWith('wrong!');
   });
+
+  it('should accept empty objects or arrays', function() {
+    var values = [[] ,{}];
+
+    values.forEach(function(value) {
+      var promises = validator.validate(value, {}, validatableAttribute);
+
+      expect(promises.length).toBe(0);
+    });
+  });
 });

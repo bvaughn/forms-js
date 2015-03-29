@@ -295,6 +295,11 @@ var formsjs;
         Form.prototype.validate = function (showValidationErrors) {
             var _this = this;
             var promises = [];
+            // TODO This only validates registered fields,
+            // But what about fields that are required but not registered (e.g. an empty collection)?
+            // Or what happens to collections themselves (e.g. length) when they aren't really explicitly registered?
+            // We may need to require collections to register - else where would validation errors be shown?
+            // TODO var fieldNames:Array<string> = Flatten.flatten(this.validationSchema_);
             Object.keys(this.fieldNameToAttributeMetadata_).forEach(function (fieldName) {
                 var attributeMetadata = _this.fieldNameToAttributeMetadata_[fieldName];
                 promises.push(attributeMetadata.validate());
@@ -864,7 +869,13 @@ var formsjs;
         ValidationService.prototype.validateField = function (fieldName, formData, validationSchema) {
             var value = formsjs.Flatten.read(fieldName, formData);
             var validatableAttribute = formsjs.Flatten.read(fieldName, validationSchema);
-            var promise = new formsjs.ValidationPromiseBuilder().add(new formsjs.RequiredValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.TypeValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.MinMaxValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.EnumValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.PatternValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.CustomValidator(this.strings).validate(value, formData, validatableAttribute)).build();
+            var promise;
+            if (!validatableAttribute) {
+                promise = Promise.resolve();
+            }
+            else {
+                promise = new formsjs.ValidationPromiseBuilder().add(new formsjs.RequiredValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.TypeValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.MinMaxValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.EnumValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.PatternValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.CustomValidator(this.strings).validate(value, formData, validatableAttribute)).build();
+            }
             return promise;
         };
         return ValidationService;

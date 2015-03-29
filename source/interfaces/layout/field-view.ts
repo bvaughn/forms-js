@@ -6,13 +6,6 @@ module formsjs {
   export interface FieldView {
 
     /**
-     * Attribute name within form data object (e.g. "username" within <code>{username: "John Doe"}</code>).
-     * This is a convenience attribute added by Forms JS based on the map key in {@link ViewSchema}.
-     * @private
-     */
-    key_:string;
-
-    /**
      * Input type used by this field; defaults to InputType.TEXT.
      */
     inputType?:InputType;

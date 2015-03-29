@@ -154,6 +154,12 @@ module formsjs {
     public validate(showValidationErrors:boolean):Promise<any> {
       var promises:Array<Promise<any>> = [];
 
+      // TODO This only validates registered fields,
+      // But what about fields that are required but not registered (e.g. an empty collection)?
+      // Or what happens to collections themselves (e.g. length) when they aren't really explicitly registered?
+      // We may need to require collections to register - else where would validation errors be shown?
+      // TODO var fieldNames:Array<string> = Flatten.flatten(this.validationSchema_);
+
       Object.keys(this.fieldNameToAttributeMetadata_).forEach(
         (fieldName:string) => {
           var attributeMetadata:AttributeMetadata = this.fieldNameToAttributeMetadata_[fieldName];

@@ -338,12 +338,6 @@ declare module formsjs {
      */
     interface FieldView {
         /**
-         * Attribute name within form data object (e.g. "username" within <code>{username: "John Doe"}</code>).
-         * This is a convenience attribute added by Forms JS based on the map key in {@link ViewSchema}.
-         * @private
-         */
-        key_: string;
-        /**
          * Input type used by this field; defaults to InputType.TEXT.
          */
         inputType?: InputType;
@@ -379,12 +373,6 @@ declare module formsjs {
      * The set of supported validation constraints that can be specified for an attribute.
      */
     interface ValidatableAttribute {
-        /**
-         * Attribute name within form data object (e.g. "username" within <code>{username: "John Doe"}</code>).
-         * This is a convenience attribute added by Forms JS based on the map key in {@link ValidationSchema}.
-         * @private
-         */
-        key_: string;
         /**
          * Optional set of acceptable values; any attributes values not within this set will be considered invalid.
          *

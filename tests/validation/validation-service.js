@@ -21,7 +21,7 @@ describe('ValidationService:', function() {
   });
 
   describe('validateField:', function() {
-    it('should accept fields without validation rules', function () {
+    it('should accept fields with empty validation rules', function () {
       expect(validationService.validateField('field', {field: null}, validationSchema)).toBeResolved();
       expect(validationService.validateField('field', {field: undefined}, validationSchema)).toBeResolved();
       expect(validationService.validateField('field', {field: 0}, validationSchema)).toBeResolved();
@@ -31,6 +31,14 @@ describe('ValidationService:', function() {
       expect(validationService.validateField('field', {field: 'value'}, validationSchema)).toBeResolved();
       expect(validationService.validateField('field', {field: []}, validationSchema)).toBeResolved();
       expect(validationService.validateField('field', {field: {}}, validationSchema)).toBeResolved();
+    });
+
+    it('should accept fields without validation rules', function () {
+      expect(validationService.validateField('field', {field: null}, {})).toBeResolved();
+    });
+
+    it('should support fields that have not been initialized', function () {
+      expect(validationService.validateField('field', {}, {})).toBeResolved();
     });
 
     it('should accept fields that meet the validation criteria', function () {
