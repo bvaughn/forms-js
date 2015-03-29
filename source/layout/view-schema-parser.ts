@@ -1,7 +1,9 @@
 module formsjs {
 
   /**
+   * Utility for working with view/layout rules.
    *
+   * <p>This utility is intended for parsing the rules only, not for generating any actual UI.
    */
   export class ViewSchemaParser {
 
