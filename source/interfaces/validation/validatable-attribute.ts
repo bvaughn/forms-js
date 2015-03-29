@@ -25,15 +25,16 @@ module formsjs {
      *
      * <p>For example, a collection of addresses may be stored within an "addresses" attribute.
      * That collection may have overall validation rules (e.g. required, min, max) and rules for individual addresses.
-     * For example, let's say that at least one address is required and that each address must define a "street".
-     * Such a validation rule may look lik this:
+     * For example let's say that at least one address is required and that each address must define a "street".
+     * Such a validation rule may look like this:
      *
      * <p><code>{
-     *   address: {
+     *   addresses: {
      *     required: true,
      *     min: 1,
      *     items: {
      *       street: {
+     *         type: "string"
      *         required: true
      *       }
      *     }
@@ -42,7 +43,7 @@ module formsjs {
      *
      * <p>This property is only supported for collection attributes (e.g. <code>type == ValidationType.ARRAY</code>).
      */
-    items?:{[fieldName:string]:ValidatableAttribute};
+    items?:ValidationSchema;
 
     /**
      * Maximum length/size of attribute.

@@ -86,6 +86,29 @@ module formsjs {
      * Register a field with the form.
      *
      * <p>All registered form-fields must be valid before the form will enable submission.
+     *
+     * <p>Note that collections must also be registered explicitly (along with any nested properties).
+     * For example, consider the following form data:
+     *
+     * <p><code>{
+     *   addresses: {
+     *     required: true,
+     *     min: 1,
+     *     items: {
+     *       street: {
+     *         type: "string",
+     *         required: true
+     *       }
+     *     }
+     *   }
+     * }</code>
+     *
+     * <p>The above data format would require registration for the following:
+     *
+     * <ul>
+     *   <li>"addresses": Register the collection itself so that required and min-size can be validated.
+     *   <li>"addresses.items.street": Register nested objects so that required and tpe can be validated.
+     * </ul>
      */
     public registerAttribute(fieldName:string):AttributeMetadata {
       if (this.fieldNameToAttributeMetadata_[fieldName]) {
@@ -154,12 +177,6 @@ module formsjs {
     public validate(showValidationErrors:boolean):Promise<any> {
       var promises:Array<Promise<any>> = [];
 
-      // TODO This only validates registered fields,
-      // But what about fields that are required but not registered (e.g. an empty collection)?
-      // Or what happens to collections themselves (e.g. length) when they aren't really explicitly registered?
-      // We may need to require collections to register - else where would validation errors be shown?
-      // TODO var fieldNames:Array<string> = Flatten.flatten(this.validationSchema_);
-
       Object.keys(this.fieldNameToAttributeMetadata_).forEach(
         (fieldName:string) => {
           var attributeMetadata:AttributeMetadata = this.fieldNameToAttributeMetadata_[fieldName];
@@ -203,3 +220,5 @@ module formsjs {
     }
   }
 }
+
+// TODO Map nested items (e.g. addresses[0].street) to validation rules (e.g. addresses.items.street).

@@ -117,6 +117,29 @@ declare module formsjs {
          * Register a field with the form.
          *
          * <p>All registered form-fields must be valid before the form will enable submission.
+         *
+         * <p>Note that collections must also be registered explicitly (along with any nested properties).
+         * For example, consider the following form data:
+         *
+         * <p><code>{
+         *   addresses: {
+         *     required: true,
+         *     min: 1,
+         *     items: {
+         *       street: {
+         *         type: "string",
+         *         required: true
+         *       }
+         *     }
+         *   }
+         * }</code>
+         *
+         * <p>The above data format would require registration for the following:
+         *
+         * <ul>
+         *   <li>"addresses": Register the collection itself so that required and min-size can be validated.
+         *   <li>"addresses.items.street": Register nested objects so that required and tpe can be validated.
+         * </ul>
          */
         registerAttribute(fieldName: string): AttributeMetadata;
         /**
@@ -369,9 +392,9 @@ declare module formsjs {
      */
     interface FieldView {
         /**
-         * Input type used by this field; defaults to InputType.TEXT.
+         * Input type used by this field; this is a required property.
          */
-        inputType?: InputType;
+        inputType: InputType;
         /**
          * Identifies the field this view schema describes (e.g. "address.city").
          */
@@ -380,6 +403,25 @@ declare module formsjs {
          * Optional help text providing additional context to users.
          */
         help?: string;
+        /**
+         * If this field is an array of objects, layout rules for those objects should be stored in this property.
+         *
+         * <p>For example, a collection of addresses may be stored within an "addresses" attribute.
+         * Each address may contain a "street" property (among other things).
+         * View rules for such an attribute may look like this:
+         *
+         * <p><code>{
+         *   addresses: {
+         *     items: {
+         *       street: {
+         *         inputType: "text",
+         *         required: true
+         *       }
+         *     }
+         *   }
+         * }</code>
+         */
+        items?: ViewSchema;
         /**
          * Field <label>; defaults to humanized form of attribute name (e.g. "firstName" becomes "First Name").
          */
@@ -426,15 +468,16 @@ declare module formsjs {
          *
          * <p>For example, a collection of addresses may be stored within an "addresses" attribute.
          * That collection may have overall validation rules (e.g. required, min, max) and rules for individual addresses.
-         * For example, let's say that at least one address is required and that each address must define a "street".
-         * Such a validation rule may look lik this:
+         * For example let's say that at least one address is required and that each address must define a "street".
+         * Such a validation rule may look like this:
          *
          * <p><code>{
-         *   address: {
+         *   addresses: {
          *     required: true,
          *     min: 1,
          *     items: {
          *       street: {
+         *         type: "string"
          *         required: true
          *       }
          *     }
@@ -443,9 +486,7 @@ declare module formsjs {
          *
          * <p>This property is only supported for collection attributes (e.g. <code>type == ValidationType.ARRAY</code>).
          */
-        items?: {
-            [fieldName: string]: ValidatableAttribute;
-        };
+        items?: ValidationSchema;
         /**
          * Maximum length/size of attribute.
          *
