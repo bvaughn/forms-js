@@ -16,46 +16,58 @@ module formsjs {
    */
   export class Strings {
 
+    public static arrayTypeValidationFailed:string = '${value} must be an array.';
     public static booleanTypeValidationFailed:string = '${value} must be a boolean.';
     public static customValidationFailed:string = 'Value ${value} failed custom validation.';
     public static enumerationValidationFailed:string = 'The value for ${value} is not in the list of allowed values';
     public static floatTypeValidationFailed:string = '${value} must be a float.';
     public static integerTypeValidationFailed:string = '${value} must be an integer.';
     public static maximumNumberValidationFailed:string = 'Must be no more than ${max}.';
+    public static maxArrayLengthValidationFailed:string = 'Must contain no more than ${max} items.';
     public static maxStringLengthValidationFailed:string = 'Must be no more than ${max} characters long.';
     public static minimumNumberValidationFailed:string = 'Must be at least ${min}.';
+    public static minArrayLengthValidationFailed:string = 'Must contain at least ${max} items.';
     public static minStringLengthValidationFailed:string = 'Must be at least ${min} characters long.';
     public static patternValidationFailed:string = 'The value for ${value} does not match the required pattern';
     public static requiredValidationFailed:string = 'This is a required field.';
     public static stringTypeValidationFailed:string = '${value} must be a string.';
 
+    private arrayTypeValidationFailed_:string;
     private booleanTypeValidationFailed_:string;
     private customValidationFailed_:string;
     private enumerationValidationFailed_:string;
     private floatTypeValidationFailed_:string;
     private integerTypeValidationFailed_:string;
     private maximumNumberValidationFailed_:string;
+    private maxArrayLengthValidationFailed_:string;
     private maxStringLengthValidationFailed_:string;
     private minimumNumberValidationFailed_:string;
+    private minArrayLengthValidationFailed_:string;
     private minStringLengthValidationFailed_:string;
     private patternValidationFailed_:string;
     private requiredValidationFailed_:string;
     private stringTypeValidationFailed_:string;
 
     constructor() {
+      this.arrayTypeValidationFailed_ = Strings.arrayTypeValidationFailed;
       this.booleanTypeValidationFailed_ = Strings.booleanTypeValidationFailed;
       this.customValidationFailed_ = Strings.customValidationFailed;
       this.enumerationValidationFailed_ = Strings.enumerationValidationFailed;
       this.floatTypeValidationFailed_ = Strings.floatTypeValidationFailed;
       this.integerTypeValidationFailed_ = Strings.integerTypeValidationFailed;
       this.maximumNumberValidationFailed_ = Strings.maximumNumberValidationFailed;
+      this.maxArrayLengthValidationFailed_ = Strings.maxArrayLengthValidationFailed;
       this.maxStringLengthValidationFailed_ = Strings.maxStringLengthValidationFailed;
       this.minimumNumberValidationFailed_ = Strings.minimumNumberValidationFailed;
+      this.minArrayLengthValidationFailed_ = Strings.minArrayLengthValidationFailed;
       this.minStringLengthValidationFailed_ = Strings.minStringLengthValidationFailed;
       this.patternValidationFailed_ = Strings.patternValidationFailed;
       this.requiredValidationFailed_ = Strings.requiredValidationFailed;
       this.stringTypeValidationFailed_ = Strings.stringTypeValidationFailed;
     }
+
+    get arrayTypeValidationFailed():string { return this.arrayTypeValidationFailed_; }
+    set arrayTypeValidationFailed(value:string) { this.arrayTypeValidationFailed_ = value; }
 
     get booleanTypeValidationFailed():string { return this.booleanTypeValidationFailed_; }
     set booleanTypeValidationFailed(value:string) { this.booleanTypeValidationFailed_ = value; }
@@ -75,11 +87,17 @@ module formsjs {
     get maximumNumberValidationFailed():string { return this.maximumNumberValidationFailed_; }
     set maximumNumberValidationFailed(value:string) { this.maximumNumberValidationFailed_ = value; }
 
+    get maxArrayLengthValidationFailed():string { return this.maxArrayLengthValidationFailed_; }
+    set maxArrayLengthValidationFailed(value:string) { this.maxArrayLengthValidationFailed_ = value; }
+
     get maxStringLengthValidationFailed():string { return this.maxStringLengthValidationFailed_; }
     set maxStringLengthValidationFailed(value:string) { this.maxStringLengthValidationFailed_ = value; }
 
     get minimumNumberValidationFailed():string { return this.minimumNumberValidationFailed_; }
     set minimumNumberValidationFailed(value:string) { this.minimumNumberValidationFailed_ = value; }
+
+    get minArrayLengthValidationFailed():string { return this.minArrayLengthValidationFailed_; }
+    set minArrayLengthValidationFailed(value:string) { this.minArrayLengthValidationFailed_ = value; }
 
     get minStringLengthValidationFailed():string { return this.minStringLengthValidationFailed_; }
     set minStringLengthValidationFailed(value:string) { this.minStringLengthValidationFailed_ = value; }

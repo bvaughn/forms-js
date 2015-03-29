@@ -31,7 +31,7 @@ describe('RequiredValidator:', function() {
     });
 
     describe('strings:', function() {
-      it('should accept values that greater than or equal to the specified minimum', function() {
+      it('should accept values that are greater than or equal to the specified minimum', function() {
         var values = ['ab', 'abc'];
 
         values.forEach(function(value) {
@@ -54,7 +54,7 @@ describe('RequiredValidator:', function() {
     });
 
     describe('numbers:', function() {
-      it('should accept values that greater than or equal to the specified minimum', function() {
+      it('should accept values that are greater than or equal to the specified minimum', function() {
         var values = [2, 3];
 
         values.forEach(function(value) {
@@ -66,6 +66,36 @@ describe('RequiredValidator:', function() {
 
       it('should reject values that less than the specified minimum', function() {
         var values = [0, 1];
+
+        values.forEach(function(value) {
+          var promises = validator.validate(value, {}, validatableAttribute);
+
+          expect(promises.length).toBe(1);
+          expect(promises[0]).toBeRejected();
+        });
+      });
+    });
+
+    describe('arrays:', function() {
+      beforeEach(function() {
+        validatableAttribute = {
+          min: 2,
+          type: formsjs.ValidationType.ARRAY
+        };
+      });
+
+      it('should accept arrays that are greater than or equal to the specified minimum', function() {
+        var values = [[1, 2], [1, 2, 3]];
+
+        values.forEach(function(value) {
+          var promises = validator.validate(value, {}, validatableAttribute);
+
+          expect(promises.length).toBe(0);
+        });
+      });
+
+      it('should reject arrays that less than the specified minimum', function() {
+        var values = [[], [1]];
 
         values.forEach(function(value) {
           var promises = validator.validate(value, {}, validatableAttribute);
@@ -104,7 +134,7 @@ describe('RequiredValidator:', function() {
         });
       });
 
-      it('should reject values that greater than the specified maximum', function() {
+      it('should reject values that are greater than the specified maximum', function() {
         var promises = validator.validate('abc', {}, validatableAttribute);
 
         expect(promises.length).toBe(1);
@@ -129,11 +159,41 @@ describe('RequiredValidator:', function() {
         });
       });
 
-      it('should reject values that greater than the specified maximum', function() {
+      it('should reject values that are greater than the specified maximum', function() {
         var promises = validator.validate(3, {}, validatableAttribute);
 
         expect(promises.length).toBe(1);
         expect(promises[0]).toBeRejected();
+      });
+    });
+
+    describe('arrays:', function() {
+      beforeEach(function() {
+        validatableAttribute = {
+          max: 2,
+          type: formsjs.ValidationType.ARRAY
+        };
+      });
+
+      it('should accept arrays that are less than or equal the specified minimum', function() {
+        var values = [[], [1], [1, 2]];
+
+        values.forEach(function(value) {
+          var promises = validator.validate(value, {}, validatableAttribute);
+
+          expect(promises.length).toBe(0);
+        });
+      });
+
+      it('should reject arrays that are greater than the specified minimum', function() {
+        var values = [[1, 2, 3]];
+
+        values.forEach(function(value) {
+          var promises = validator.validate(value, {}, validatableAttribute);
+
+          expect(promises.length).toBe(1);
+          expect(promises[0]).toBeRejected();
+        });
       });
     });
   });

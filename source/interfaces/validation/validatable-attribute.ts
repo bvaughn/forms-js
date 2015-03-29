@@ -28,13 +28,38 @@ module formsjs {
     enumerationFailureMessage?:string;
 
     /**
+     * If this attribute is a collection of objects, nested object validation rules belong within this property.
+     *
+     * <p>For example, a collection of addresses may be stored within an "addresses" attribute.
+     * That collection may have overall validation rules (e.g. required, min, max) and rules for individual addresses.
+     * For example, let's say that at least one address is required and that each address must define a "street".
+     * Such a validation rule may look lik this:
+     *
+     * <p><code>{
+     *   address: {
+     *     required: true,
+     *     min: 1,
+     *     items: {
+     *       street: {
+     *         required: true
+     *       }
+     *     }
+     *   }
+     * }</code>
+     *
+     * <p>This property is only supported for collection attributes (e.g. <code>type == ValidationType.ARRAY</code>).
+     */
+    items?:{[fieldName:string]:ValidatableAttribute};
+
+    /**
      * Maximum length/size of attribute.
      *
      * <p>The attribute type will determine which type of comparison this constraint results in:
      * <ul>
+     *   <li>array: Array must contain no more than this number of items
+     *   <li>date: Date must be no later than this value
      *   <li>number: Numeric value must be <= this value
      *   <li>string: String length must be <= this value
-     *   <li>date: Date must be no later than this value
      * </ul>
      *
      * <p>Max validations will fail with a default error message unless overridden with "maxFailureMessage".
@@ -54,9 +79,10 @@ module formsjs {
      *
      * <p>The attribute type will determine which type of comparison this constraint results in:
      * <ul>
+     *   <li>array: Array must contain at least this number of items
+     *   <li>date: Date must be no earlier than this value
      *   <li>number: Numeric value must be >= this value
      *   <li>string: String length must be >= this value
-     *   <li>date: Date must be no earlier than this value
      * </ul>
      *
      * <p>Min validations will fail with a default error message unless overridden with "minFailureMessage".

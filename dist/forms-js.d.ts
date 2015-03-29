@@ -157,39 +157,48 @@ declare module formsjs {
      * </ul>
      */
     class Strings {
+        static arrayTypeValidationFailed: string;
         static booleanTypeValidationFailed: string;
         static customValidationFailed: string;
         static enumerationValidationFailed: string;
         static floatTypeValidationFailed: string;
         static integerTypeValidationFailed: string;
         static maximumNumberValidationFailed: string;
+        static maxArrayLengthValidationFailed: string;
         static maxStringLengthValidationFailed: string;
         static minimumNumberValidationFailed: string;
+        static minArrayLengthValidationFailed: string;
         static minStringLengthValidationFailed: string;
         static patternValidationFailed: string;
         static requiredValidationFailed: string;
         static stringTypeValidationFailed: string;
+        private arrayTypeValidationFailed_;
         private booleanTypeValidationFailed_;
         private customValidationFailed_;
         private enumerationValidationFailed_;
         private floatTypeValidationFailed_;
         private integerTypeValidationFailed_;
         private maximumNumberValidationFailed_;
+        private maxArrayLengthValidationFailed_;
         private maxStringLengthValidationFailed_;
         private minimumNumberValidationFailed_;
+        private minArrayLengthValidationFailed_;
         private minStringLengthValidationFailed_;
         private patternValidationFailed_;
         private requiredValidationFailed_;
         private stringTypeValidationFailed_;
         constructor();
+        arrayTypeValidationFailed: string;
         booleanTypeValidationFailed: string;
         customValidationFailed: string;
         enumerationValidationFailed: string;
         floatTypeValidationFailed: string;
         integerTypeValidationFailed: string;
         maximumNumberValidationFailed: string;
+        maxArrayLengthValidationFailed: string;
         maxStringLengthValidationFailed: string;
         minimumNumberValidationFailed: string;
+        minArrayLengthValidationFailed: string;
         minStringLengthValidationFailed: string;
         patternValidationFailed: string;
         requiredValidationFailed: string;
@@ -211,55 +220,11 @@ declare module formsjs {
      * Supported type validations.
      */
     enum ValidationType {
+        ARRAY,
         BOOLEAN,
         FLOAT,
         INTEGER,
         STRING,
-    }
-}
-declare module formsjs {
-    class ValidationPromiseBuilder {
-        private failureMessages_;
-        private promise_;
-        private promiseRejecter_;
-        private promiseResolver_;
-        private promises_;
-        constructor(promises?: Array<Promise<any>>);
-        /**
-         * Adds validation Promises to the watched collection.
-         *
-         * @param promises Set of validation promise to observe
-         * @returns A reference to the current ValidationPromiseBuilder
-         */
-        add(promises: Array<Promise<any>>): ValidationPromiseBuilder;
-        /**
-         * Creates a Promise to be resolved or rejected once all watched validation Promises complete.
-         */
-        build(): Promise<any>;
-        private checkForCompletion_();
-        private markCompleted_(promise);
-    }
-}
-declare module formsjs {
-    class ValidationService {
-        protected strings_: Strings;
-        /**
-         * Constructor.
-         */
-        constructor(strings?: Strings);
-        /**
-         * Default validation failure messages.
-         */
-        strings: Strings;
-        /**
-         * Validates an individual attribute (specified by fieldName) according to the provided validation rules.
-         *
-         * @param fieldName Name of attribute in formData object
-         * @param formData Form data
-         * @param validationSchema See {@link ValidationSchema}
-         * @returns Promise that resolves/rejects based on validation outcome.
-         */
-        validateField(fieldName: string, formData: any, validationSchema: ValidationSchema): Promise<any>;
     }
 }
 declare module formsjs {
@@ -320,6 +285,51 @@ declare module formsjs {
          * Create a new UID.
          */
         static create(): string;
+    }
+}
+declare module formsjs {
+    class ValidationPromiseBuilder {
+        private failureMessages_;
+        private promise_;
+        private promiseRejecter_;
+        private promiseResolver_;
+        private promises_;
+        constructor(promises?: Array<Promise<any>>);
+        /**
+         * Adds validation Promises to the watched collection.
+         *
+         * @param promises Set of validation promise to observe
+         * @returns A reference to the current ValidationPromiseBuilder
+         */
+        add(promises: Array<Promise<any>>): ValidationPromiseBuilder;
+        /**
+         * Creates a Promise to be resolved or rejected once all watched validation Promises complete.
+         */
+        build(): Promise<any>;
+        private checkForCompletion_();
+        private markCompleted_(promise);
+    }
+}
+declare module formsjs {
+    class ValidationService {
+        protected strings_: Strings;
+        /**
+         * Constructor.
+         */
+        constructor(strings?: Strings);
+        /**
+         * Default validation failure messages.
+         */
+        strings: Strings;
+        /**
+         * Validates an individual attribute (specified by fieldName) according to the provided validation rules.
+         *
+         * @param fieldName Name of attribute in formData object
+         * @param formData Form data
+         * @param validationSchema See {@link ValidationSchema}
+         * @returns Promise that resolves/rejects based on validation outcome.
+         */
+        validateField(fieldName: string, formData: any, validationSchema: ValidationSchema): Promise<any>;
     }
 }
 declare module formsjs {
@@ -389,13 +399,39 @@ declare module formsjs {
          */
         enumerationFailureMessage?: string;
         /**
+         * If this attribute is a collection of objects, nested object validation rules belong within this property.
+         *
+         * <p>For example, a collection of addresses may be stored within an "addresses" attribute.
+         * That collection may have overall validation rules (e.g. required, min, max) and rules for individual addresses.
+         * For example, let's say that at least one address is required and that each address must define a "street".
+         * Such a validation rule may look lik this:
+         *
+         * <p><code>{
+         *   address: {
+         *     required: true,
+         *     min: 1,
+         *     items: {
+         *       street: {
+         *         required: true
+         *       }
+         *     }
+         *   }
+         * }</code>
+         *
+         * <p>This property is only supported for collection attributes (e.g. <code>type == ValidationType.ARRAY</code>).
+         */
+        items?: {
+            [fieldName: string]: ValidatableAttribute;
+        };
+        /**
          * Maximum length/size of attribute.
          *
          * <p>The attribute type will determine which type of comparison this constraint results in:
          * <ul>
+         *   <li>array: Array must contain no more than this number of items
+         *   <li>date: Date must be no later than this value
          *   <li>number: Numeric value must be <= this value
          *   <li>string: String length must be <= this value
-         *   <li>date: Date must be no later than this value
          * </ul>
          *
          * <p>Max validations will fail with a default error message unless overridden with "maxFailureMessage".
@@ -413,9 +449,10 @@ declare module formsjs {
          *
          * <p>The attribute type will determine which type of comparison this constraint results in:
          * <ul>
+         *   <li>array: Array must contain at least this number of items
+         *   <li>date: Date must be no earlier than this value
          *   <li>number: Numeric value must be >= this value
          *   <li>string: String length must be >= this value
-         *   <li>date: Date must be no earlier than this value
          * </ul>
          *
          * <p>Min validations will fail with a default error message unless overridden with "minFailureMessage".

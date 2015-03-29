@@ -185,4 +185,43 @@ describe('TypeValidator:', function() {
       });
     });
   });
+
+  describe('array:', function() {
+    beforeEach(function() {
+      validatableAttribute = {
+        type: Type.ARRAY
+      };
+    });
+
+    it('should accept array values', function() {
+      var values = [[], [0], ['one', 'two']];
+
+      values.forEach(function(value) {
+        var promises = validator.validate(value, {}, validatableAttribute);
+
+        expect(promises.length).toBe(0);
+      });
+    });
+
+    it('should ignore empty values', function() {
+      var values = [undefined, null];
+
+      values.forEach(function(value) {
+        var promises = validator.validate(value, {}, validatableAttribute);
+
+        expect(promises.length).toBe(0);
+      });
+    });
+
+    it('should reject non-array values', function() {
+      var values = [1, 'string', {foo: 'bar'}, new Date()];
+
+      values.forEach(function(value) {
+        var promises = validator.validate(value, {}, validatableAttribute);
+
+        expect(promises.length).toBe(1);
+        expect(promises[0]).toBeRejected();
+      });
+    });
+  });
 });

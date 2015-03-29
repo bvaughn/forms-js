@@ -349,19 +349,32 @@ var formsjs;
      */
     var Strings = (function () {
         function Strings() {
+            this.arrayTypeValidationFailed_ = Strings.arrayTypeValidationFailed;
             this.booleanTypeValidationFailed_ = Strings.booleanTypeValidationFailed;
             this.customValidationFailed_ = Strings.customValidationFailed;
             this.enumerationValidationFailed_ = Strings.enumerationValidationFailed;
             this.floatTypeValidationFailed_ = Strings.floatTypeValidationFailed;
             this.integerTypeValidationFailed_ = Strings.integerTypeValidationFailed;
             this.maximumNumberValidationFailed_ = Strings.maximumNumberValidationFailed;
+            this.maxArrayLengthValidationFailed_ = Strings.maxArrayLengthValidationFailed;
             this.maxStringLengthValidationFailed_ = Strings.maxStringLengthValidationFailed;
             this.minimumNumberValidationFailed_ = Strings.minimumNumberValidationFailed;
+            this.minArrayLengthValidationFailed_ = Strings.minArrayLengthValidationFailed;
             this.minStringLengthValidationFailed_ = Strings.minStringLengthValidationFailed;
             this.patternValidationFailed_ = Strings.patternValidationFailed;
             this.requiredValidationFailed_ = Strings.requiredValidationFailed;
             this.stringTypeValidationFailed_ = Strings.stringTypeValidationFailed;
         }
+        Object.defineProperty(Strings.prototype, "arrayTypeValidationFailed", {
+            get: function () {
+                return this.arrayTypeValidationFailed_;
+            },
+            set: function (value) {
+                this.arrayTypeValidationFailed_ = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(Strings.prototype, "booleanTypeValidationFailed", {
             get: function () {
                 return this.booleanTypeValidationFailed_;
@@ -422,6 +435,16 @@ var formsjs;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(Strings.prototype, "maxArrayLengthValidationFailed", {
+            get: function () {
+                return this.maxArrayLengthValidationFailed_;
+            },
+            set: function (value) {
+                this.maxArrayLengthValidationFailed_ = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(Strings.prototype, "maxStringLengthValidationFailed", {
             get: function () {
                 return this.maxStringLengthValidationFailed_;
@@ -438,6 +461,16 @@ var formsjs;
             },
             set: function (value) {
                 this.minimumNumberValidationFailed_ = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Strings.prototype, "minArrayLengthValidationFailed", {
+            get: function () {
+                return this.minArrayLengthValidationFailed_;
+            },
+            set: function (value) {
+                this.minArrayLengthValidationFailed_ = value;
             },
             enumerable: true,
             configurable: true
@@ -482,14 +515,17 @@ var formsjs;
             enumerable: true,
             configurable: true
         });
+        Strings.arrayTypeValidationFailed = '${value} must be an array.';
         Strings.booleanTypeValidationFailed = '${value} must be a boolean.';
         Strings.customValidationFailed = 'Value ${value} failed custom validation.';
         Strings.enumerationValidationFailed = 'The value for ${value} is not in the list of allowed values';
         Strings.floatTypeValidationFailed = '${value} must be a float.';
         Strings.integerTypeValidationFailed = '${value} must be an integer.';
         Strings.maximumNumberValidationFailed = 'Must be no more than ${max}.';
+        Strings.maxArrayLengthValidationFailed = 'Must contain no more than ${max} items.';
         Strings.maxStringLengthValidationFailed = 'Must be no more than ${max} characters long.';
         Strings.minimumNumberValidationFailed = 'Must be at least ${min}.';
+        Strings.minArrayLengthValidationFailed = 'Must contain at least ${max} items.';
         Strings.minStringLengthValidationFailed = 'Must be at least ${min} characters long.';
         Strings.patternValidationFailed = 'The value for ${value} does not match the required pattern';
         Strings.requiredValidationFailed = 'This is a required field.';
@@ -516,111 +552,13 @@ var formsjs;
      * Supported type validations.
      */
     (function (ValidationType) {
+        ValidationType[ValidationType["ARRAY"] = Array] = "ARRAY";
         ValidationType[ValidationType["BOOLEAN"] = "boolean"] = "BOOLEAN";
         ValidationType[ValidationType["FLOAT"] = "float"] = "FLOAT";
         ValidationType[ValidationType["INTEGER"] = "integer"] = "INTEGER";
         ValidationType[ValidationType["STRING"] = "string"] = "STRING";
     })(formsjs.ValidationType || (formsjs.ValidationType = {}));
     var ValidationType = formsjs.ValidationType;
-})(formsjs || (formsjs = {}));
-/// <reference path="../../definitions/es6-promise.d.ts" />
-var formsjs;
-(function (formsjs) {
-    var ValidationPromiseBuilder = (function () {
-        function ValidationPromiseBuilder(promises) {
-            this.promises_ = promises || [];
-            this.failureMessages_ = [];
-        }
-        /**
-         * Adds validation Promises to the watched collection.
-         *
-         * @param promises Set of validation promise to observe
-         * @returns A reference to the current ValidationPromiseBuilder
-         */
-        ValidationPromiseBuilder.prototype.add = function (promises) {
-            var _this = this;
-            promises.forEach(function (promise) {
-                _this.promises_.push(promise);
-                promise.then(function () {
-                    _this.markCompleted_(promise);
-                    _this.checkForCompletion_();
-                }, function (error) {
-                    _this.failureMessages_.push(error);
-                    _this.markCompleted_(promise);
-                    _this.checkForCompletion_();
-                });
-            });
-            return this;
-        };
-        /**
-         * Creates a Promise to be resolved or rejected once all watched validation Promises complete.
-         */
-        ValidationPromiseBuilder.prototype.build = function () {
-            var _this = this;
-            this.promise_ = new Promise(function (resolve, reject) {
-                _this.promiseResolver_ = resolve;
-                _this.promiseRejecter_ = reject;
-            });
-            this.checkForCompletion_();
-            return this.promise_;
-        };
-        ValidationPromiseBuilder.prototype.checkForCompletion_ = function () {
-            if (this.promise_ && this.promises_.length === 0) {
-                if (this.failureMessages_.length > 0) {
-                    this.promiseRejecter_(this.failureMessages_);
-                }
-                else {
-                    this.promiseResolver_();
-                }
-            }
-        };
-        ValidationPromiseBuilder.prototype.markCompleted_ = function (promise) {
-            this.promises_.splice(this.promises_.indexOf(promise), 1);
-        };
-        return ValidationPromiseBuilder;
-    })();
-    formsjs.ValidationPromiseBuilder = ValidationPromiseBuilder;
-})(formsjs || (formsjs = {}));
-/// <reference path="../../definitions/es6-promise.d.ts" />
-var formsjs;
-(function (formsjs) {
-    var ValidationService = (function () {
-        /**
-         * Constructor.
-         */
-        function ValidationService(strings) {
-            this.strings_ = strings || new formsjs.Strings();
-        }
-        Object.defineProperty(ValidationService.prototype, "strings", {
-            /**
-             * Default validation failure messages.
-             */
-            get: function () {
-                return this.strings_;
-            },
-            set: function (value) {
-                this.strings_ = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        /**
-         * Validates an individual attribute (specified by fieldName) according to the provided validation rules.
-         *
-         * @param fieldName Name of attribute in formData object
-         * @param formData Form data
-         * @param validationSchema See {@link ValidationSchema}
-         * @returns Promise that resolves/rejects based on validation outcome.
-         */
-        ValidationService.prototype.validateField = function (fieldName, formData, validationSchema) {
-            var value = formsjs.Flatten.read(fieldName, formData);
-            var validatableAttribute = formsjs.Flatten.read(fieldName, validationSchema);
-            var promise = new formsjs.ValidationPromiseBuilder().add(new formsjs.RequiredValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.TypeValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.MinMaxValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.EnumValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.PatternValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.CustomValidator(this.strings).validate(value, formData, validatableAttribute)).build();
-            return promise;
-        };
-        return ValidationService;
-    })();
-    formsjs.ValidationService = ValidationService;
 })(formsjs || (formsjs = {}));
 /// <reference path="../../definitions/es6-promise.d.ts" />
 var formsjs;
@@ -834,6 +772,105 @@ var formsjs;
     })();
     formsjs.UID = UID;
 })(formsjs || (formsjs = {}));
+/// <reference path="../../definitions/es6-promise.d.ts" />
+var formsjs;
+(function (formsjs) {
+    var ValidationPromiseBuilder = (function () {
+        function ValidationPromiseBuilder(promises) {
+            this.promises_ = promises || [];
+            this.failureMessages_ = [];
+        }
+        /**
+         * Adds validation Promises to the watched collection.
+         *
+         * @param promises Set of validation promise to observe
+         * @returns A reference to the current ValidationPromiseBuilder
+         */
+        ValidationPromiseBuilder.prototype.add = function (promises) {
+            var _this = this;
+            promises.forEach(function (promise) {
+                _this.promises_.push(promise);
+                promise.then(function () {
+                    _this.markCompleted_(promise);
+                    _this.checkForCompletion_();
+                }, function (error) {
+                    _this.failureMessages_.push(error);
+                    _this.markCompleted_(promise);
+                    _this.checkForCompletion_();
+                });
+            });
+            return this;
+        };
+        /**
+         * Creates a Promise to be resolved or rejected once all watched validation Promises complete.
+         */
+        ValidationPromiseBuilder.prototype.build = function () {
+            var _this = this;
+            this.promise_ = new Promise(function (resolve, reject) {
+                _this.promiseResolver_ = resolve;
+                _this.promiseRejecter_ = reject;
+            });
+            this.checkForCompletion_();
+            return this.promise_;
+        };
+        ValidationPromiseBuilder.prototype.checkForCompletion_ = function () {
+            if (this.promise_ && this.promises_.length === 0) {
+                if (this.failureMessages_.length > 0) {
+                    this.promiseRejecter_(this.failureMessages_);
+                }
+                else {
+                    this.promiseResolver_();
+                }
+            }
+        };
+        ValidationPromiseBuilder.prototype.markCompleted_ = function (promise) {
+            this.promises_.splice(this.promises_.indexOf(promise), 1);
+        };
+        return ValidationPromiseBuilder;
+    })();
+    formsjs.ValidationPromiseBuilder = ValidationPromiseBuilder;
+})(formsjs || (formsjs = {}));
+/// <reference path="../../definitions/es6-promise.d.ts" />
+var formsjs;
+(function (formsjs) {
+    var ValidationService = (function () {
+        /**
+         * Constructor.
+         */
+        function ValidationService(strings) {
+            this.strings_ = strings || new formsjs.Strings();
+        }
+        Object.defineProperty(ValidationService.prototype, "strings", {
+            /**
+             * Default validation failure messages.
+             */
+            get: function () {
+                return this.strings_;
+            },
+            set: function (value) {
+                this.strings_ = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        /**
+         * Validates an individual attribute (specified by fieldName) according to the provided validation rules.
+         *
+         * @param fieldName Name of attribute in formData object
+         * @param formData Form data
+         * @param validationSchema See {@link ValidationSchema}
+         * @returns Promise that resolves/rejects based on validation outcome.
+         */
+        ValidationService.prototype.validateField = function (fieldName, formData, validationSchema) {
+            var value = formsjs.Flatten.read(fieldName, formData);
+            var validatableAttribute = formsjs.Flatten.read(fieldName, validationSchema);
+            var promise = new formsjs.ValidationPromiseBuilder().add(new formsjs.RequiredValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.TypeValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.MinMaxValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.EnumValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.PatternValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.CustomValidator(this.strings).validate(value, formData, validatableAttribute)).build();
+            return promise;
+        };
+        return ValidationService;
+    })();
+    formsjs.ValidationService = ValidationService;
+})(formsjs || (formsjs = {}));
 /// <reference path="../../../definitions/es6-promise.d.ts" />
 /// <reference path="../../../definitions/es6-promise.d.ts" />
 /// <reference path="../../../definitions/es6-promise.d.ts" />
@@ -955,7 +992,10 @@ var formsjs;
             var promises = [];
             var failureMessage;
             if (validatableAttribute.min) {
-                if (typeof value === 'string' && value.length < validatableAttribute.min) {
+                if (validatableAttribute.type === formsjs.ValidationType.ARRAY && !!value && value.length < validatableAttribute.min) {
+                    failureMessage = validatableAttribute.minFailureMessage || this.strings.minArrayLengthValidationFailed;
+                }
+                else if (typeof value === 'string' && value.length < validatableAttribute.min) {
                     failureMessage = validatableAttribute.minFailureMessage || this.strings.minStringLengthValidationFailed;
                 }
                 else if (typeof value === 'number' && value < validatableAttribute.min) {
@@ -970,7 +1010,10 @@ var formsjs;
                 }
             }
             if (validatableAttribute.max) {
-                if (typeof value === 'string' && value.length > validatableAttribute.max) {
+                if (validatableAttribute.type === formsjs.ValidationType.ARRAY && !!value && value.length > validatableAttribute.max) {
+                    failureMessage = validatableAttribute.maxFailureMessage || this.strings.maxArrayLengthValidationFailed;
+                }
+                else if (typeof value === 'string' && value.length > validatableAttribute.max) {
                     failureMessage = validatableAttribute.maxFailureMessage || this.strings.maxStringLengthValidationFailed;
                 }
                 else if (typeof value === 'number' && value > validatableAttribute.max) {
@@ -1057,6 +1100,13 @@ var formsjs;
                 var numericValue = Number(value);
                 var failureMessage;
                 switch (validatableAttribute.type) {
+                    case formsjs.ValidationType.ARRAY:
+                        if (stringValue && !Array.isArray(value)) {
+                            failureMessage = validatableAttribute.typeFailureMessage || this.strings.arrayTypeValidationFailed;
+                            failureMessage = failureMessage.replace('${value}', value);
+                            promises.push(Promise.reject(failureMessage));
+                        }
+                        break;
                     case formsjs.ValidationType.BOOLEAN:
                         if (stringValue && stringValue != 'true' && stringValue != 'false') {
                             failureMessage = validatableAttribute.typeFailureMessage || this.strings.booleanTypeValidationFailed;

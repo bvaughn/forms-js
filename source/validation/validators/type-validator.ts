@@ -17,6 +17,14 @@ module formsjs {
         var failureMessage;
 
         switch (validatableAttribute.type) {
+          case ValidationType.ARRAY:
+            if (stringValue && !Array.isArray(value)) {
+              failureMessage = validatableAttribute.typeFailureMessage || this.strings.arrayTypeValidationFailed;
+              failureMessage = failureMessage.replace('${value}', value);
+
+              promises.push(Promise.reject(failureMessage));
+            }
+            break;
           case ValidationType.BOOLEAN:
             if (stringValue && stringValue != 'true' && stringValue != 'false') {
               failureMessage = validatableAttribute.typeFailureMessage || this.strings.booleanTypeValidationFailed;

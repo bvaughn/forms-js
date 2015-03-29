@@ -13,7 +13,9 @@ module formsjs {
       var failureMessage:string;
 
       if (validatableAttribute.min) {
-        if (typeof value === 'string' && value.length < validatableAttribute.min) {
+        if (validatableAttribute.type === ValidationType.ARRAY && !!value && value.length < validatableAttribute.min) {
+          failureMessage = validatableAttribute.minFailureMessage || this.strings.minArrayLengthValidationFailed;
+        } else if (typeof value === 'string' && value.length < validatableAttribute.min) {
           failureMessage = validatableAttribute.minFailureMessage || this.strings.minStringLengthValidationFailed;
         } else if (typeof value === 'number' && value < validatableAttribute.min) {
           failureMessage = validatableAttribute.minFailureMessage || this.strings.minimumNumberValidationFailed;
@@ -31,7 +33,9 @@ module formsjs {
       }
 
       if (validatableAttribute.max) {
-        if (typeof value === 'string' && value.length > validatableAttribute.max) {
+        if (validatableAttribute.type === ValidationType.ARRAY && !!value && value.length > validatableAttribute.max) {
+          failureMessage = validatableAttribute.maxFailureMessage || this.strings.maxArrayLengthValidationFailed;
+        } else if (typeof value === 'string' && value.length > validatableAttribute.max) {
           failureMessage = validatableAttribute.maxFailureMessage || this.strings.maxStringLengthValidationFailed;
         } else if (typeof value === 'number' && value > validatableAttribute.max) {
           failureMessage = validatableAttribute.maxFailureMessage || this.strings.maximumNumberValidationFailed;
