@@ -384,6 +384,11 @@ declare module formsjs {
          * @returns Promise that resolves/rejects based on validation outcome.
          */
         validateField(fieldName: string, formData: any, validationSchema: ValidationSchema): Promise<any>;
+        /**
+         * Safely looks up validation rules for a field.
+         * This function maps nested array objects (e.g. "addresses[0].street") to a format like "addresses.items.street".
+         */
+        private getValidatableAttribute_(fieldName, validationSchema);
     }
 }
 declare module formsjs {

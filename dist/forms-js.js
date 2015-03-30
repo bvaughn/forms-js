@@ -932,7 +932,7 @@ var formsjs;
          */
         ValidationService.prototype.validateField = function (fieldName, formData, validationSchema) {
             var value = formsjs.Flatten.read(fieldName, formData);
-            var validatableAttribute = formsjs.Flatten.read(fieldName, validationSchema);
+            var validatableAttribute = this.getValidatableAttribute_(fieldName, validationSchema);
             var promise;
             if (!validatableAttribute) {
                 promise = Promise.resolve();
@@ -941,6 +941,14 @@ var formsjs;
                 promise = new formsjs.ValidationPromiseBuilder().add(new formsjs.RequiredValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.TypeValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.MinMaxValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.EnumValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.PatternValidator(this.strings).validate(value, formData, validatableAttribute)).add(new formsjs.CustomValidator(this.strings).validate(value, formData, validatableAttribute)).build();
             }
             return promise;
+        };
+        /**
+         * Safely looks up validation rules for a field.
+         * This function maps nested array objects (e.g. "addresses[0].street") to a format like "addresses.items.street".
+         */
+        ValidationService.prototype.getValidatableAttribute_ = function (fieldName, validationSchema) {
+            fieldName = fieldName.replace(/\[[0-9]*\]/g, '.items');
+            return formsjs.Flatten.read(fieldName, validationSchema);
         };
         return ValidationService;
     })();

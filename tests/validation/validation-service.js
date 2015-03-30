@@ -92,4 +92,62 @@ describe('ValidationService:', function() {
       expect(failureMessages).toContain('Foo is not an integer.');
     });
   });
+
+  describe('getValidatableAttribute:', function() {
+    beforeEach(function() {
+      validationSchema = {
+        topLevelField: {required: true, type: 'string'},
+        topLevelObject: {
+          nestedField: {required: true, type: 'float'}
+        },
+        topLevelArray: {
+          type: 'array',
+          min: 1,
+          items: {
+            nestedField: {required: true, type: 'boolean'}
+          }
+        }
+      };
+    });
+
+    it('should find validation rules for a top-level field if one is registered', function () {
+      var validatableAttribute = validationService.getValidatableAttribute_('topLevelField', validationSchema);
+
+      expect(validatableAttribute).toBeTruthy();
+      expect(validatableAttribute.required).toBeTruthy();
+      expect(validatableAttribute.type).toBe('string');
+    });
+
+    it('should find validation rules for a nested field if one is registered', function () {
+      var validatableAttribute = validationService.getValidatableAttribute_('topLevelObject.nestedField', validationSchema);
+
+      expect(validatableAttribute).toBeTruthy();
+      expect(validatableAttribute.required).toBeTruthy();
+      expect(validatableAttribute.type).toBe('float');
+    });
+
+    it('should find validation rules for a collection if one is registered', function () {
+      var validatableAttribute = validationService.getValidatableAttribute_('topLevelArray', validationSchema);
+
+      expect(validatableAttribute).toBeTruthy();
+      expect(validatableAttribute.type).toBe('array');
+      expect(validatableAttribute.min).toBe(1);
+    });
+
+    it('should find validation rules for an item nested in a collection if one is registered', function () {
+      var fieldNames = [
+        'topLevelArray[].nestedField',
+        'topLevelArray[0].nestedField',
+        'topLevelArray.items.nestedField'
+      ];
+
+      fieldNames.forEach(function (fieldName) {
+        var validatableAttribute = validationService.getValidatableAttribute_(fieldName, validationSchema);
+
+        expect(validatableAttribute).toBeTruthy();
+        expect(validatableAttribute.required).toBeTruthy();
+        expect(validatableAttribute.type).toBe('boolean');
+      });
+    });
+  });
 });

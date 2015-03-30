@@ -33,7 +33,7 @@ module formsjs {
      */
     public validateField(fieldName:string, formData:any, validationSchema:ValidationSchema):Promise<any> {
       var value:any = Flatten.read(fieldName, formData);
-      var validatableAttribute:ValidatableAttribute = Flatten.read(fieldName, validationSchema);
+      var validatableAttribute:ValidatableAttribute = this.getValidatableAttribute_(fieldName, validationSchema);
 
       var promise:Promise<any>;
 
@@ -52,7 +52,16 @@ module formsjs {
       }
 
       return promise;
+    }
 
+    /**
+     * Safely looks up validation rules for a field.
+     * This function maps nested array objects (e.g. "addresses[0].street") to a format like "addresses.items.street".
+     */
+    private getValidatableAttribute_(fieldName:string, validationSchema:ValidationSchema):ValidatableAttribute {
+      fieldName = fieldName.replace(/\[[0-9]*\]/g, '.items');
+
+      return Flatten.read(fieldName, validationSchema);
     }
   }
 }
