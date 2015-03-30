@@ -28,19 +28,35 @@ Next you should wire your form inputs (the view) up with the `Form` instance so 
 
 ```js
 var attributeMetadata = formsjsForm.registerAttribute('username');
-// AttributeMetadata defines properties like errorMessages (Array).
-// And methods like validate() that can be called when input-values change.
-// Calling validate() will (asynchronously) update the 'errorMessages' property.
+
+// AttributeMetadata defines an errorMessages Array.
+// You should bind to it in your view as it is used to show validation errors.
+attributeMetadata.errorMessages;
+
+// AttributeMetadata exposes a method named validate().
+// You should call it any time your view updates the field's value.
+// It will (asynchronously) update the 'errorMessages' property.
+attributeMetadata.validate();
 ```
 
 You'll also want to override a form-submit event so that `Form` can require a valid state. If the current form-data is valid it will be submitted using the `submitFunction` you provided earlier.
 
 ```js
-yourFormElement.on('submit', function() {
+var formElement = document.getElementById('yourForm');
+
+// Angular/jQuery style
+$(formElement).on("submit", function() {
   formsjsForm.submitIfValid();
-  
+
   return false;
 });
+
+// Plain JavaScript
+formElement.addEventListener("submit", function() {
+  event.preventDefault();
+
+  formsjsForm.submitIfValid();
+}), false);
 ```
 
 # Installation
