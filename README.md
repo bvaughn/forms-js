@@ -2,6 +2,47 @@
 
 Forms JS is a form validation library intended to provide a backbone for other, framework-specific libraries.
 
+# Overview
+
+To use Forms JS for validation, begin by creating an instance of `Form` and providing it with validation rules and a form-data object.
+
+```js
+var formsjsForm = new formsjs.Form();
+formsjsForm.formData = { // Input fields should read/write data to this object.
+  username: "bvaughn"    // Default values can be provided.
+};
+formsjsForm.validationService = { // Maps field-names to validation rules.
+  username: {                     // It should mirror the structure of form-data.
+    required: true,
+    type: "string"
+  }
+};
+formsjsForm.submitFunction = function() {
+  // You provide this function.
+  // It is responsible for submitting your form data and returning a Promise.
+  // This Promise should resolve/reject based on the response you receive after submitting.
+};
+```
+
+Next you should wire your form inputs (the view) up with the `Form` instance so it can validate your data. (Note that Forms JS doesn't provide any view elements, only validation.) Each web component/Angular directive/React component/whatever should register itself like so:
+
+```js
+var attributeMetadata = formsjsForm.registerAttribute('username');
+// AttributeMetadata defines properties like errorMessages (Array).
+// And methods like validate() that can be called when input-values change.
+// Calling validate() will (asynchronously) update the 'errorMessages' property.
+```
+
+You'll also want to override a form-submit event so that `Form` can require a valid state. If the current form-data is valid it will be submitted using the `submitFunction` you provided earlier.
+
+```js
+yourFormElement.on('submit', function() {
+  formsjsForm.submitIfValid();
+  
+  return false;
+});
+```
+
 # Installation
 
 Forms JS is available on both [Bower](http://bower.io/) and [NPM](https://www.npmjs.com/) under the name `forms-js`. You can install the library like so:
