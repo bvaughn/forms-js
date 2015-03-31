@@ -4,7 +4,7 @@ Forms JS is a form validation library intended to provide a backbone for other, 
 
 # Overview
 
-To use Forms JS for validation, begin by creating an instance of `Form` and providing it with validation rules and a form-data object.
+To use Forms JS for validation, begin by creating an instance of `Form` and providing it with [validation rules](https://github.com/forms-js/forms-js/blob/master/source/interfaces/validation/validatable-attribute.ts) and a form-data object.
 
 ```js
 var formsjsForm = new formsjs.Form();
