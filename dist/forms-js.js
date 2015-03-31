@@ -113,6 +113,7 @@ var formsjs;
         AttributeMetadata.prototype.validate = function () {
             var _this = this;
             var promise = this.form_.validationService.validateField(this.fieldName_, this.form_.formData, this.form_.validationSchema);
+            this.pristine_ = false;
             promise.then(function () {
                 _this.errorMessages_ = [];
             }, function (errorMessages) {

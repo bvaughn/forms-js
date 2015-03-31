@@ -94,6 +94,8 @@ module formsjs {
           this.form_.formData,
           this.form_.validationSchema);
 
+      this.pristine_ = false;
+
       promise.then(
         () => {
           this.errorMessages_ = [];

@@ -43,6 +43,14 @@ describe('AttributeMetadata:', function() {
       expect(attributeMetadata.validate()).toBeResolved();
       expect(attributeMetadata.errorMessages.length).toBeFalsy();
     });
+
+    it('should set field not-pristine when it is validated', function () {
+      expect(attributeMetadata.pristine).toBeTruthy();
+
+      attributeMetadata.validate();
+
+      expect(attributeMetadata.pristine).toBeFalsy();
+    });
   });
 
   describe('reset:', function () {
