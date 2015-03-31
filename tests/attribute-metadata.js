@@ -45,9 +45,14 @@ describe('AttributeMetadata:', function() {
     });
 
     it('should set field not-pristine when it is validated', function () {
+      form.formData[FIELD_NAME] = null;
+
       expect(attributeMetadata.pristine).toBeTruthy();
 
       attributeMetadata.validate();
+
+      // Don't leave a lingering Promise; this could break other tests.
+      jasmine.clock().tick(1);
 
       expect(attributeMetadata.pristine).toBeFalsy();
     });
